@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <style>
+        body, html { margin:0; padding:0; height:100%; font-family:'Segoe UI',Arial,sans-serif; background-color:#000; color:#fff; }
+        body.landing-active { overflow:hidden; display:flex; justify-content:center; align-items:center; }
+        .container { position:relative; width:100%; height:100%; display:flex; justify-content:center; align-items:center; }
+        .door { width:200px; height:400px; background-color:#1a1a1a; border:2px solid #333; border-radius:4px; position:relative; cursor:pointer; z-index:2; transition:transform 0.5s,border-color 0.3s; box-shadow:0 0 30px rgba(0,0,0,0.8); }
+        .door:hover { transform:scale(1.05); border-color:#ff0000; }
+        .door-knob { width:20px; height:20px; background-color:#ddd; border-radius:50%; position:absolute; right:30px; top:200px; box-shadow:0 2px 5px rgba(0,0,0,0.5); }
+        .warning-text { position:absolute; color:#ff0000; font-size:24px; font-weight:bold; text-shadow:0 0 10px rgba(255,0,0,0.7); opacity:0; animation:popInOut 2.5s infinite; white-space:nowrap; pointer-events:none; }
+        @keyframes popInOut {
+            0%  {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--angle)) scale(var(--sc));}
+            2%  {opacity:1;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--w2))    scale(var(--sb));}
+            4%  {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w1))    scale(var(--sc));}
+            5%  {opacity:.8; transform:translate(var(--ox), var(--oy))  rotate(var(--w3))    scale(var(--sa));}
+            7%  {opacity:0;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--angle)) scale(var(--sc));}
+            8%  {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w2))    scale(var(--sb));}
+            10% {opacity:.3; transform:translate(var(--m1x),var(--m1y)) rotate(var(--w1))    scale(var(--sa));}
+            11% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w3))    scale(var(--sc));}
+            13% {opacity:1;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--angle)) scale(var(--sb));}
+            14% {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--w2))    scale(var(--sc));}
+            16% {opacity:.7; transform:translate(var(--m1x),var(--m1y)) rotate(var(--w1))    scale(var(--sa));}
+            17% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w3))    scale(var(--sc));}
+            18% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--angle)) scale(var(--sc));}
+            20% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w2))    scale(var(--sb));}
+            21% {opacity:.2; transform:translate(var(--m2x),var(--m2y)) rotate(var(--w1))    scale(var(--sc));}
+            23% {opacity:1;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--w3))    scale(var(--sb));}
+            24% {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--angle)) scale(var(--sa));}
+            26% {opacity:.9; transform:translate(var(--m2x),var(--m2y)) rotate(var(--w2))    scale(var(--sb));}
+            27% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w1))    scale(var(--sc));}
+            28% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w3))    scale(var(--sc));}
+            30% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--angle)) scale(var(--sa));}
+            31% {opacity:.4; transform:translate(var(--m1x),var(--m1y)) rotate(var(--w2))    scale(var(--sb));}
+            33% {opacity:0;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--w1))    scale(var(--sc));}
+            34% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w3))    scale(var(--sb));}
+            36% {opacity:0;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--angle)) scale(var(--sa));}
+            37% {opacity:.6; transform:translate(var(--dx), var(--dy))  rotate(var(--w2))    scale(var(--sc));}
+            38% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w1))    scale(var(--sc));}
+            40% {opacity:1;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--w3))    scale(var(--sb));}
+            41% {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--angle)) scale(var(--sc));}
+            43% {opacity:.8; transform:translate(var(--m1x),var(--m1y)) rotate(var(--w2))    scale(var(--sa));}
+            44% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w1))    scale(var(--sc));}
+            45% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w3))    scale(var(--sc));}
+            47% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--angle)) scale(var(--sb));}
+            48% {opacity:.1; transform:translate(var(--m2x),var(--m2y)) rotate(var(--w2))    scale(var(--sa));}
+            50% {opacity:1;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--w1))    scale(var(--sb));}
+            51% {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--w3))    scale(var(--sc));}
+            53% {opacity:.5; transform:translate(var(--m2x),var(--m2y)) rotate(var(--angle)) scale(var(--sa));}
+            54% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w2))    scale(var(--sc));}
+            55% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w1))    scale(var(--sc));}
+            57% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w3))    scale(var(--sb));}
+            58% {opacity:.3; transform:translate(var(--m1x),var(--m1y)) rotate(var(--angle)) scale(var(--sa));}
+            60% {opacity:0;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--w2))    scale(var(--sc));}
+            61% {opacity:.9; transform:translate(var(--ox), var(--oy))  rotate(var(--w1))    scale(var(--sb));}
+            63% {opacity:0;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--w3))    scale(var(--sc));}
+            64% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--angle)) scale(var(--sc));}
+            66% {opacity:1;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--w2))    scale(var(--sb));}
+            67% {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--w1))    scale(var(--sa));}
+            69% {opacity:.7; transform:translate(var(--m1x),var(--m1y)) rotate(var(--w3))    scale(var(--sb));}
+            70% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--angle)) scale(var(--sc));}
+            71% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w2))    scale(var(--sc));}
+            73% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w1))    scale(var(--sa));}
+            74% {opacity:.2; transform:translate(var(--m2x),var(--m2y)) rotate(var(--w3))    scale(var(--sb));}
+            76% {opacity:0;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--angle)) scale(var(--sc));}
+            77% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w2))    scale(var(--sb));}
+            79% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w3))    scale(var(--sc));}
+            80% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w1))    scale(var(--sc));}
+            82% {opacity:.8; transform:translate(var(--m2x),var(--m2y)) rotate(var(--angle)) scale(var(--sa));}
+            83% {opacity:0;  transform:translate(var(--ox), var(--oy))  rotate(var(--w2))    scale(var(--sc));}
+            85% {opacity:1;  transform:translate(var(--m1x),var(--m1y)) rotate(var(--w3))    scale(var(--sb));}
+            86% {opacity:.4; transform:translate(var(--m2x),var(--m2y)) rotate(var(--w1))    scale(var(--sa));}
+            88% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--angle)) scale(var(--sc));}
+            89% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w2))    scale(var(--sc));}
+            91% {opacity:1;  transform:translate(var(--ox), var(--oy))  rotate(var(--w3))    scale(var(--sb));}
+            92% {opacity:.6; transform:translate(var(--m1x),var(--m1y)) rotate(var(--angle)) scale(var(--sa));}
+            94% {opacity:0;  transform:translate(var(--m2x),var(--m2y)) rotate(var(--w1))    scale(var(--sc));}
+            96% {opacity:.3; transform:translate(var(--ox), var(--oy))  rotate(var(--w2))    scale(var(--sb));}
+            97% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--w3))    scale(var(--sc));}
+            98% {opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--angle)) scale(var(--sc));}
+            100%{opacity:0;  transform:translate(var(--dx), var(--dy))  rotate(var(--angle)) scale(var(--sc));}
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        .portfolio { display:none; width:100%; min-height:100vh; background-color:#0b0b0b; box-sizing:border-box; color:#e0e0e0; }
+        .portfolio-content { max-width:1100px; margin:0 auto; padding:60px 20px; }
+        .hero { text-align:center; padding:80px 0; border-bottom:1px solid #222; }
+        .hero h1 { font-size:3.5rem; margin:0 0 10px 0; color:#fff; letter-spacing:-1px; }
+        .hero p { font-size:1.2rem; color:#888; margin:0; }
+        .section { padding:60px 0; border-bottom:1px solid #222; }
+        .section-title { font-size:1.8rem; color:#fff; margin-bottom:30px; position:relative; display:inline-block; }
+        .section-title::after { content:''; position:absolute; bottom:-8px; left:0; width:40px; height:2px; border-bottom:2px solid #ff0000; }
+        .about-grid { display:grid; grid-template-columns:1fr 2fr; gap:40px; align-items:start; }
+        @media(max-width:768px){.about-grid{grid-template-columns:1fr;}}
+        .profile-img-placeholder { width:100%; aspect-ratio:1; background-color:#1a1a1a; border:1px solid #333; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555; }
+        .about-text p { line-height:1.6; margin-top:0; color:#aaa; }
+        .projects-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:30px; }
+        .project-card { background-color:#121212; border:1px solid #222; border-radius:8px; overflow:hidden; transition:transform 0.3s,border-color 0.3s; }
+        .project-card:hover { transform:translateY(-5px); border-color:#444; }
+        .project-image { width:100%; height:200px; background-color:#1a1a1a; display:flex; align-items:center; justify-content:center; color:#444; border-bottom:1px solid #222; }
+        .project-info { padding:20px; }
+        .project-info h3 { margin:0 0 10px 0; color:#fff; }
+        .project-info p { font-size:0.9rem; color:#999; line-height:1.5; margin:0 0 20px 0; }
+        .project-tags { display:flex; gap:8px; flex-wrap:wrap; }
+        .tag { font-size:0.75rem; background-color:#1a1a1a; color:#888; padding:4px 10px; border-radius:4px; border:1px solid #222; }
+    </style>
+</head>
+<body class="landing-active">
+
+<div class="container" id="landing">
+    <div class="door" id="door"><div class="door-knob"></div></div>
+</div>
+
+<div class="portfolio" id="portfolio">
+    <div class="portfolio-content">
+        <header class="hero">
+            <h1>Cit</h1>
+            <p>Student</p>
+        </header>
+        <section class="section">
+            <h2 class="section-title">About Me</h2>
+            <div class="about-grid">
+                <div class="profile-img-placeholder"><span>[ Profile Image ]</span></div>
+                <div class="about-text">
+                    <p>I am a student, I study. I also occasionally use Blender</p>
+                    <p>I also do other things outside of studying, and Blender like &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</p>
+                </div>
+            </div>
+        </section>
+        <section class="section">
+            <h2 class="section-title">Featured</h2>
+            <div class="projects-grid">
+
+                <div class="project-card">
+                    <div class="project-image"><span>[ Image Placeholder ]</span></div>
+                    <div class="project-info">
+                        <h3>Academics</h3>
+                        <p>Achieved 3-4 academic achievers in SIS school programme.</p>
+                        <p>Not much to say</p>
+                        <div class="project-tags"></div>
+                    </div>
+                </div>
+
+                <div class="project-card" style="cursor:pointer;" onclick="openBlender()">
+                    <div class="project-image"><span>[ Image Placeholder ]</span></div>
+                    <div class="project-info">
+                        <h3>Blender</h3>
+                        <p>I've messed around with it, haven't done any actual work...but soon</p>
+                    </div>
+                </div>
+
+                <div class="project-card" style="cursor:pointer;" onclick="openRedacted()">
+                    <div class="project-image" style="background:#0a0a0a; flex-direction:column; gap:8px;">
+                        <span style="color:#333; font-family:monospace; font-size:13px; letter-spacing:2px;">&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</span>
+                        <span style="color:#1a1a1a; font-size:11px; font-family:monospace;">ACCESS RESTRICTED</span>
+                    </div>
+                    <div class="project-info">
+                        <h3 style="color:#444; font-family:monospace; letter-spacing:3px;">[REDACTED]</h3>
+                        <p style="color:#2a2a2a; font-family:monospace; font-size:0.85rem;">I &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588; &#x2588;&#x2588;&#x2588;&#x2588; &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588; &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588; &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588; &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588; &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- BLENDER OVERLAY -->
+<div id="blender-overlay" style="display:none; position:fixed; inset:0; background:#0a0a0a; z-index:9999; overflow-y:auto;">
+    <div style="max-width:900px; margin:0 auto; padding:60px 24px 80px; font-family:'Segoe UI',Arial,sans-serif;">
+
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:60px;">
+            <div>
+                <div style="font-size:11px; letter-spacing:4px; color:#444; margin-bottom:12px; text-transform:uppercase;">Project</div>
+                <h1 style="font-size:3rem; font-weight:700; color:#fff; margin:0 0 8px; letter-spacing:-1px;">Blender</h1>
+                <p style="color:#555; font-size:14px; margin:0; letter-spacing:1px;">3D Modelling &amp; Rendering</p>
+            </div>
+            <button onclick="document.getElementById('blender-overlay').style.display='none'; document.body.style.overflow='';"
+                style="background:none; border:1px solid #2a2a2a; color:#444; font-family:monospace; font-size:12px; padding:8px 16px; cursor:pointer; border-radius:2px; margin-top:8px;"
+                onmouseover="this.style.borderColor='#fff';this.style.color='#fff'"
+                onmouseout="this.style.borderColor='#2a2a2a';this.style.color='#444'">&#x2715; CLOSE</button>
+        </div>
+
+        <div style="border:1px solid #1e1e1e; border-left:2px solid #ff0000; padding:16px 20px; margin-bottom:60px; display:flex; align-items:center; gap:16px;">
+            <div style="width:6px; height:6px; background:#ff0000; border-radius:50%; animation:blink 1.4s infinite;"></div>
+            <span style="color:#555; font-size:13px; letter-spacing:1px;">STATUS: IN PROGRESS &#8212; NO FINISHED WORKS YET</span>
+        </div>
+
+        <div style="margin-bottom:60px;">
+            <div style="font-size:11px; letter-spacing:4px; color:#333; margin-bottom:24px; text-transform:uppercase;">Gallery</div>
+            <div id="bl-main-img" onclick="blenderCycleMain()"
+                style="width:100%; aspect-ratio:16/9; background:#111; border:1px solid #1a1a1a;
+                display:flex; align-items:center; justify-content:center; margin-bottom:12px;
+                position:relative; overflow:hidden; cursor:pointer;">
+                <div id="bl-placeholder" style="text-align:center; pointer-events:none;">
+                    <div style="font-size:32px; margin-bottom:8px; opacity:0.15;">&#x2B21;</div>
+                    <div style="font-size:11px; color:#333; letter-spacing:3px;">ADD IMAGES BELOW</div>
+                    <div style="font-size:10px; color:#252525; letter-spacing:2px; margin-top:6px;">click to cycle</div>
+                </div>
+                <div id="bl-img-display" style="position:absolute; inset:0; display:none; background-size:cover; background-position:center;"></div>
+                <div id="bl-img-counter" style="position:absolute; bottom:12px; right:12px; font-size:10px; color:rgba(255,255,255,0.3); font-family:monospace; display:none;"></div>
+            </div>
+            <div id="bl-thumbs" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+            <div style="margin-top:16px;">
+                <label style="display:inline-flex; align-items:center; gap:8px; border:1px dashed #222; color:#444;
+                    font-size:12px; letter-spacing:2px; padding:10px 20px; cursor:pointer; font-family:monospace;"
+                    onmouseover="this.style.borderColor='#555';this.style.color='#888'"
+                    onmouseout="this.style.borderColor='#222';this.style.color='#444'">
+                    + ADD RENDER
+                    <input type="file" accept="image/*" multiple onchange="blenderAddImages(event)" style="display:none;">
+                </label>
+                <span style="color:#2a2a2a; font-size:11px; margin-left:16px; letter-spacing:1px;">images stay local &#8212; nothing is uploaded anywhere</span>
+            </div>
+        </div>
+
+        <div style="border-top:1px solid #161616; margin-bottom:60px;"></div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-bottom:60px;">
+            <div>
+                <div style="font-size:11px; letter-spacing:4px; color:#333; margin-bottom:20px; text-transform:uppercase;">About</div>
+                <p style="color:#666; font-size:14px; line-height:1.8; margin:0 0 16px;">I've been exploring Blender &#8212; mostly poking around the interface, watching tutorials, and getting comfortable with basic animation using simple rigs.</p>
+                <p style="color:#444; font-size:14px; line-height:1.8; margin:0;">No finished pieces yet, but the goal is to get to a point where I can create something worth showing. When that happens, it'll be here.</p>
+            </div>
+            <div>
+                <div style="font-size:11px; letter-spacing:4px; color:#333; margin-bottom:20px; text-transform:uppercase;">Progress</div>
+                <div style="display:flex; flex-direction:column; gap:16px;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span style="font-size:12px; color:#444; letter-spacing:1px;">Interface &amp; navigation</span>
+                            <span style="font-size:12px; color:#555; font-family:monospace;">25%</span>
+                        </div>
+                        <div style="height:2px; background:#1a1a1a; border-radius:1px;"><div style="height:100%; width:25%; background:#ff0000; border-radius:1px;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span style="font-size:12px; color:#444; letter-spacing:1px;">Basic animation</span>
+                            <span style="font-size:12px; color:#555; font-family:monospace;">40%</span>
+                        </div>
+                        <div style="height:2px; background:#1a1a1a; border-radius:1px;"><div style="height:100%; width:40%; background:#ff0000; border-radius:1px;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span style="font-size:12px; color:#444; letter-spacing:1px;">Materials &amp; shading</span>
+                            <span style="font-size:12px; color:#555; font-family:monospace;">0%</span>
+                        </div>
+                        <div style="height:2px; background:#1a1a1a; border-radius:1px;"><div style="height:100%; width:0%; background:#ff0000; border-radius:1px;"></div></div>
+                    </div>
+                    <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                            <span style="font-size:12px; color:#444; letter-spacing:1px;">Rendering</span>
+                            <span style="font-size:12px; color:#555; font-family:monospace;">0%</span>
+                        </div>
+                        <div style="height:2px; background:#1a1a1a; border-radius:1px;"><div style="height:100%; width:0%; background:#ff0000; border-radius:1px;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <span style="font-size:11px; color:#333; border:1px solid #1e1e1e; padding:5px 12px; letter-spacing:2px;">BLENDER</span>
+            <span style="font-size:11px; color:#333; border:1px solid #1e1e1e; padding:5px 12px; letter-spacing:2px;">3D</span>
+            <span style="font-size:11px; color:#333; border:1px solid #1e1e1e; padding:5px 12px; letter-spacing:2px;">ANIMATION</span>
+            <span style="font-size:11px; color:#333; border:1px solid #1e1e1e; padding:5px 12px; letter-spacing:2px;">WIP</span>
+        </div>
+    </div>
+</div>
+
+<!-- REDACTED GAME OVERLAY -->
+<div id="redacted-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:9999; flex-direction:column; align-items:center; justify-content:center;">
+    <button onclick="document.getElementById('redacted-overlay').style.display='none'"
+        style="position:absolute; top:16px; right:20px; background:none; border:1px solid #333; color:#555; font-family:monospace; font-size:11px; letter-spacing:2px; padding:6px 14px; cursor:pointer; z-index:10;">&#x2715; CLOSE</button>
+    <canvas id="rc" style="display:block; width:100%; height:100%;"></canvas>
+    <div id="rhud" style="position:absolute; inset:0; pointer-events:none; color:#fff; font-family:monospace;">
+        <div style="position:absolute; bottom:30px; left:50%; transform:translateX(-50%); width:200px; text-align:center;">
+            <div style="font-size:11px; color:#aaa; margin-bottom:4px; letter-spacing:2px;">STAMINA</div>
+            <div style="width:100%; height:6px; background:#222; border-radius:3px;">
+                <div id="rstam" style="height:6px; background:#fff; border-radius:3px; width:100%; transition:width 0.1s;"></div>
+            </div>
+        </div>
+        <div id="rprompt" style="position:absolute; bottom:80px; left:50%; transform:translateX(-50%); font-size:13px; color:#ccc; letter-spacing:2px; opacity:0; transition:opacity 0.2s;">[ E ] OPEN DOOR</div>
+        <div id="rdoors" style="position:absolute; top:20px; right:60px; font-size:12px; color:#555; letter-spacing:2px; text-align:right;"></div>
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:16px; height:16px; pointer-events:none;">
+            <div style="position:absolute; width:1px; height:100%; left:50%; background:rgba(255,255,255,0.5);"></div>
+            <div style="position:absolute; width:100%; height:1px; top:50%; background:rgba(255,255,255,0.5);"></div>
+        </div>
+        <div id="rblood" style="position:absolute; inset:0; pointer-events:none;"></div>
+        <div style="position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.85) 100%);"></div>
+        <div id="rmsg" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; pointer-events:all;">
+            <h2 id="rmsg-title" style="font-size:2rem; letter-spacing:4px; margin-bottom:12px;"></h2>
+            <p id="rmsg-body" style="font-size:13px; color:#666; letter-spacing:2px; margin-bottom:24px;"></p>
+            <button onclick="startRedacted()" style="background:none; border:1px solid #444; color:#888; padding:10px 24px; font-family:monospace; font-size:12px; letter-spacing:2px; cursor:pointer;">TRY AGAIN</button>
+            <button onclick="document.getElementById('redacted-overlay').style.display='none'" style="margin-left:12px; background:none; border:1px solid #444; color:#888; padding:10px 24px; font-family:monospace; font-size:12px; letter-spacing:2px; cursor:pointer;">LEAVE</button>
+        </div>
+        <div id="rintro" style="position:absolute; inset:0; background:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; pointer-events:all;">
+            <h1 style="font-size:1.4rem; letter-spacing:6px; color:#555;">[REDACTED]</h1>
+            <p style="font-size:12px; color:#333; letter-spacing:2px; max-width:340px; line-height:1.8;">Your academic achievements have broken free.<br>Open all the doors before they catch you.<br><br>WASD &#8212; move &nbsp;|&nbsp; Mouse &#8212; look<br>E &#8212; interact &nbsp;|&nbsp; Shift &#8212; sprint</p>
+            <button onclick="startRedacted()" style="background:none; border:1px solid #333; color:#555; padding:10px 28px; font-family:monospace; letter-spacing:3px; cursor:pointer; font-size:12px;">ENTER</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ── LANDING ─────────────────────────────────────────────────── */
+const container = document.getElementById('landing');
+const phrases = ["PLEASE KEEP THIS DOOR CLOSED","PLEASE KEEP THIS DOOR CLOSED","PLEASE KEEP THIS DOOR CLOSED","PLEASE KEEP THIS DOOR CLOSED","PLEASE KEEP THIS DOOR CLOSED"];
+
+function randomisePosition(text, index) {
+    const baseAngle = (360 / phrases.length) * index;
+    const angle = baseAngle + (Math.random() - 0.5) * 120;
+    const rad = angle * Math.PI / 180;
+    const originRadius = 120 + Math.random() * 60;
+    const ox = Math.cos(rad) * originRadius, oy = Math.sin(rad) * originRadius;
+    const destRadius = 300 + Math.random() * 120;
+    const dx = Math.cos(rad) * destRadius, dy = Math.sin(rad) * destRadius;
+    const mid1R = originRadius + (destRadius - originRadius) * (0.25 + Math.random() * 0.15);
+    const mid1X = Math.cos(rad) * mid1R + (Math.random() - 0.5) * 60;
+    const mid1Y = Math.sin(rad) * mid1R + (Math.random() - 0.5) * 60;
+    const mid2R = originRadius + (destRadius - originRadius) * (0.55 + Math.random() * 0.15);
+    const mid2X = Math.cos(rad) * mid2R + (Math.random() - 0.5) * 50;
+    const mid2Y = Math.sin(rad) * mid2R + (Math.random() - 0.5) * 50;
+    text.style.setProperty('--ox',   `${ox}px`);   text.style.setProperty('--oy',   `${oy}px`);
+    text.style.setProperty('--dx',   `${dx}px`);   text.style.setProperty('--dy',   `${dy}px`);
+    text.style.setProperty('--m1x',  `${mid1X}px`);text.style.setProperty('--m1y',  `${mid1Y}px`);
+    text.style.setProperty('--m2x',  `${mid2X}px`);text.style.setProperty('--m2y',  `${mid2Y}px`);
+    text.style.setProperty('--angle',`${angle}deg`);
+    text.style.setProperty('--w1',   `${angle+(Math.random()-0.5)*40}deg`);
+    text.style.setProperty('--w2',   `${angle+(Math.random()-0.5)*60}deg`);
+    text.style.setProperty('--w3',   `${angle+(Math.random()-0.5)*30}deg`);
+    text.style.setProperty('--sa',   (0.75+Math.random()*0.4).toFixed(2));
+    text.style.setProperty('--sb',   (1.0 +Math.random()*0.4).toFixed(2));
+    text.style.setProperty('--sc',   (0.6 +Math.random()*0.3).toFixed(2));
+}
+
+phrases.forEach((phrase, index) => {
+    const text = document.createElement('div');
+    text.className = 'warning-text';
+    text.textContent = phrase;
+    randomisePosition(text, index);
+    text.style.animationDelay    = `${(Math.random()*2).toFixed(2)}s`;
+    text.style.animationDuration = `${(3.5+Math.random()*2.5).toFixed(2)}s`;
+    text.addEventListener('animationiteration', () => randomisePosition(text, index));
+    container.appendChild(text);
+});
+
+document.getElementById('door').addEventListener('click', function () {
+    document.body.classList.remove('landing-active');
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('portfolio').style.display = 'block';
+});
+
+/* ── BLENDER ─────────────────────────────────────────────────── */
+window.openBlender = function () {
+    document.getElementById('blender-overlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+};
+
+let blImages = [], blActive = 0;
+
+window.blenderAddImages = function (e) {
+    Array.from(e.target.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = ev => { blImages.push(ev.target.result); blenderRenderThumbs(); blenderShowMain(blImages.length - 1); };
+        reader.readAsDataURL(file);
+    });
+};
+
+function blenderShowMain(index) {
+    blActive = index;
+    const display = document.getElementById('bl-img-display');
+    const counter = document.getElementById('bl-img-counter');
+    const ph = document.getElementById('bl-placeholder');
+    if (blImages.length === 0) { display.style.display='none'; counter.style.display='none'; ph.style.display='block'; return; }
+    ph.style.display = 'none';
+    display.style.backgroundImage = `url(${blImages[index]})`;
+    display.style.display = 'block';
+    counter.style.display = 'block';
+    counter.textContent = `${index+1} / ${blImages.length}`;
+    document.querySelectorAll('.bl-thumb').forEach((t,i) => { t.style.borderColor = i===index ? '#ff0000' : '#1a1a1a'; });
+}
+
+function blenderRenderThumbs() {
+    const row = document.getElementById('bl-thumbs');
+    row.innerHTML = '';
+    blImages.forEach((src, i) => {
+        const thumb = document.createElement('div');
+        thumb.className = 'bl-thumb';
+        thumb.style.cssText = `width:72px;height:48px;background-image:url(${src});background-size:cover;background-position:center;cursor:pointer;border:1px solid #1a1a1a;flex-shrink:0;transition:border-color 0.15s;`;
+        thumb.onclick = () => blenderShowMain(i);
+        row.appendChild(thumb);
+    });
+}
+
+window.blenderCycleMain = function () {
+    if (blImages.length === 0) return;
+    blenderShowMain((blActive + 1) % blImages.length);
+};
+
+/* ── REDACTED GAME ───────────────────────────────────────────── */
+(function () {
+    const CELL=80;
+    
+    const LEVEL_MAPS = [
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
+            [1,0,1,0,1,0,1,1,0,1,1,0,1,0,1],
+            [1,0,1,0,2,0,0,1,0,0,2,0,1,0,1],
+            [1,0,1,1,1,1,0,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+            [1,0,1,1,0,1,1,1,1,1,0,1,1,0,1],
+            [1,0,0,1,0,0,0,1,0,0,0,1,0,0,1],
+            [1,1,0,1,1,1,0,2,0,1,1,1,0,1,1],
+            [1,0,0,0,0,0,0,1,0,0,0,0,0,0,1],
+            [1,0,1,1,2,1,0,1,0,1,2,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        ],
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+            [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+            [1,0,1,2,1,0,1,2,1,0,1,2,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,0,0,0,0,0,0,2,0,0,0,0,0,0,1],
+            [1,1,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,2,1,0,1,2,1,0,1,2,1,0,1],
+            [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+            [1,0,0,0,1,0,0,0,1,0,0,0,1,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ],
+        [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,0,1,0,1,1,1,1,0,1],
+            [1,0,1,0,0,0,0,1,0,0,0,0,1,0,1],
+            [1,0,1,0,1,1,2,1,2,1,1,0,1,0,1],
+            [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
+            [1,0,1,0,2,0,0,0,0,0,2,0,1,0,1],
+            [1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
+            [1,0,1,0,1,1,2,1,2,1,1,0,1,0,1],
+            [1,0,1,0,0,0,0,1,0,0,0,0,1,0,1],
+            [1,0,1,1,1,1,0,1,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ]
+    ];
+
+    const LEVEL_WIN_SCREENS = [
+        {
+            title: "101 GENERAL EDUCATION COMPLETE",
+            body: "You survived the foundational syllabus. The basic requirements are behind you... but upper-division territory is waiting.",
+            btn: "PROCEED TO CORE MAJOR COURSES"
+        },
+        {
+            title: "MIDTERMS SURVIVED",
+            body: "You navigated the dense core curriculum under intense pressure. Only the final defense stands between you and your degree.",
+            btn: "ENTER THE FINALS GAUNTLET"
+        }
+    ];
+
+    const LEVEL_THEMES = [
+        { wall:{r:65,g:70,b:75},   door:{r:130,g:40,b:40},  floor:"#02050c" },
+        { wall:{r:25,g:45,b:80},   door:{r:160,g:100,b:20}, floor:"#020205" },
+        { wall:{r:90,g:15,b:25},   door:{r:190,g:10,b:10},  floor:"#000000" }
+    ];
+
+    // Visual profile for each enemy
+    const ENEMY_PROFILES = {
+        'GPA 4.0':          { color:[220,220,220], shape:'diamond',  size:1.0, glowColor:'rgba(220,220,255,0.3)' },
+        'THESIS DUE':       { color:[180,80,255],  shape:'tall',     size:1.2, glowColor:'rgba(180,80,255,0.25)' },
+        'FINALS WEEK':      { color:[255,160,0],   shape:'wide',     size:1.1, glowColor:'rgba(255,160,0,0.3)'   },
+        'INTERNSHIP':       { color:[0,200,120],   shape:'split',    size:0.9, glowColor:'rgba(0,200,120,0.2)'   },
+        'PUBLISH OR PERISH':{ color:[255,30,30],   shape:'orb',      size:1.3, glowColor:'rgba(255,0,0,0.4)'     },
+    };
+
+    let currentLevel = 0;
+    const FOV=Math.PI/3, RAYS=320, MOVE_S=2.2, RUN_S=3.8, STAM_DRAIN=0.004, STAM_REGEN=0.002;
+    const ENEMY_LABELS=['GPA 4.0','THESIS DUE','FINALS WEEK','INTERNSHIP','PUBLISH OR PERISH'];
+    let canvas,ctx,W,H,map,doors,enemies,player,keys,mouseX,rRunning,last,ePressed,canInteract,interactDoor,openedCount,inited=false;
+    let audioCtx=null;
+    let hudWarningText="", hudWarningTimer=0;
+    let flashDimmedTimer=0;
+    let depthBuffer=new Array(RAYS);
+    let ROWS,COLS;
+    let footstepTimer=0;
+    let isJumpscaring=false, jumpscareTimer=0, jumpscareKiller="", jumpscareColor=[255,0,0];
+    let ambushDroneOsc=null, ambushDroneGain=null;
+
+    // Publish or Perish demand mechanic
+    let popDemandActive=false;       // currently demanding player looks at it
+    let popDemandTimer=0;            // countdown ms player has to comply
+    let popDemandCooldown=0;         // cooldown before next demand
+    let popPlayerLooking=false;      // is player facing it right now
+    let popAngered=false;            // has the demand been ignored?
+    let popAngeredTimer=0;           // how long angry state lasts
+    const POP_DEMAND_WINDOW=2800;    // ms to look before getting angry
+    const POP_DEMAND_COOLDOWN=7000;  // ms between demands
+    const POP_ANGRY_DURATION=6000;   // ms of boosted speed
+
+    function init(){
+        canvas=document.getElementById('rc'); ctx=canvas.getContext('2d');
+        window.addEventListener('resize',resize);
+        canvas.addEventListener('mousemove',e=>{ if(document.pointerLockElement===canvas&&!isJumpscaring) mouseX=e.movementX; });
+        canvas.addEventListener('click',()=>{ if(rRunning) canvas.requestPointerLock(); });
+        document.addEventListener('keydown',e=>{ if(keys) keys[e.code]=true; });
+        document.addEventListener('keyup',  e=>{ if(keys) keys[e.code]=false; });
+        inited=true;
+    }
+    function resize(){ if(!canvas) return; W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
+
+    function initAudio(){ if(!audioCtx){ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); createAmbushDroneNode(); } }
+
+    function createAmbushDroneNode(){
+        if(!audioCtx) return;
+        try{
+            ambushDroneOsc=audioCtx.createOscillator(); ambushDroneGain=audioCtx.createGain();
+            ambushDroneOsc.type='sawtooth'; ambushDroneOsc.frequency.setValueAtTime(100,audioCtx.currentTime);
+            ambushDroneGain.gain.setValueAtTime(0,audioCtx.currentTime);
+            ambushDroneOsc.connect(ambushDroneGain); ambushDroneGain.connect(audioCtx.destination);
+            ambushDroneOsc.start();
+        }catch(e){}
+    }
+
+    // Ambush drone: layered oscillators for a more unsettling sound
+    let droneNodes = [];
+
+    function createAmbushDroneNode(){
+        if(!audioCtx) return;
+        try{
+            // Layer 1: low sub rumble
+            const sub = audioCtx.createOscillator();
+            const subGain = audioCtx.createGain();
+            sub.type = 'sine';
+            sub.frequency.setValueAtTime(48, audioCtx.currentTime);
+            subGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            sub.connect(subGain); subGain.connect(audioCtx.destination);
+            sub.start();
+
+            // Layer 2: mid sawtooth with slow LFO pitch wobble
+            const mid = audioCtx.createOscillator();
+            const midGain = audioCtx.createGain();
+            const lfo = audioCtx.createOscillator();
+            const lfoGain = audioCtx.createGain();
+            mid.type = 'sawtooth';
+            mid.frequency.setValueAtTime(92, audioCtx.currentTime);
+            lfo.type = 'sine';
+            lfo.frequency.setValueAtTime(0.18, audioCtx.currentTime);
+            lfoGain.gain.setValueAtTime(7, audioCtx.currentTime);
+            lfo.connect(lfoGain); lfoGain.connect(mid.frequency);
+            midGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            mid.connect(midGain); midGain.connect(audioCtx.destination);
+            mid.start(); lfo.start();
+
+            // Layer 3: high thin whistle for unease
+            const hi = audioCtx.createOscillator();
+            const hiGain = audioCtx.createGain();
+            hi.type = 'triangle';
+            hi.frequency.setValueAtTime(310, audioCtx.currentTime);
+            hiGain.gain.setValueAtTime(0, audioCtx.currentTime);
+            hi.connect(hiGain); hiGain.connect(audioCtx.destination);
+            hi.start();
+
+            droneNodes = [
+                { osc: sub, gain: subGain,  targetVol: 0.22 },
+                { osc: mid, gain: midGain,  targetVol: 0.13 },
+                { osc: hi,  gain: hiGain,   targetVol: 0.05 },
+            ];
+            // keep legacy refs so stopAmbushDrone still works
+            ambushDroneGain = subGain;
+        }catch(e){}
+    }
+
+    function updateAmbushDroneAudio(){
+        if(!audioCtx || droneNodes.length === 0) return;
+
+        // Find nearest ambushing enemy and its intensity
+        let hi = 0;
+        enemies.forEach(e=>{
+            if(e.state==='AMBUSH'){
+                const d = Math.hypot(player.x-e.x, player.y-e.y);
+                const t = Math.max(0, 1-(d/(CELL*5.5)));
+                if(t > hi) hi = t;
+            }
+        });
+
+        try{
+            droneNodes.forEach(n=>{
+                n.gain.gain.setTargetAtTime(hi * n.targetVol, audioCtx.currentTime, 0.18);
+            });
+            // Subtle pitch drift on the mid layer based on how close they are
+            if(hi > 0 && droneNodes[1]){
+                const drift = 92 + hi * 18 + Math.sin(Date.now()*0.0007)*4;
+                droneNodes[1].osc.frequency.setTargetAtTime(drift, audioCtx.currentTime, 0.3);
+            }
+        }catch(e){}
+    }
+
+    function stopAmbushDrone(){
+        try{
+            droneNodes.forEach(n=>{
+                n.gain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
+            });
+        }catch(e){}
+    }
+    function playSpotSound(isSpecial){
+        if(!audioCtx) return;
+        try{
+            let o=audioCtx.createOscillator(), g=audioCtx.createGain();
+            o.type=isSpecial?'sawtooth':'triangle';
+            o.frequency.setValueAtTime(isSpecial?380:180,audioCtx.currentTime);
+            o.frequency.exponentialRampToValueAtTime(40,audioCtx.currentTime+0.4);
+            g.gain.setValueAtTime(0.3,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.4);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.4);
+        }catch(e){}
+    }
+    function playFootstepSound(sprint){
+        if(!audioCtx) return;
+        try{
+            let o=audioCtx.createOscillator(), g=audioCtx.createGain();
+            o.type='sine'; o.frequency.setValueAtTime(sprint?75:55,audioCtx.currentTime);
+            o.frequency.exponentialRampToValueAtTime(20,audioCtx.currentTime+0.12);
+            g.gain.setValueAtTime(sprint?0.25:0.15,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.12);
+        }catch(e){}
+    }
+    function playJumpscareSound(){
+        if(!audioCtx) return;
+        try{
+            let dur=0.75;
+            let o1=audioCtx.createOscillator(), o2=audioCtx.createOscillator(), g=audioCtx.createGain();
+            o1.type='sawtooth'; o1.frequency.setValueAtTime(120,audioCtx.currentTime); o1.frequency.linearRampToValueAtTime(30,audioCtx.currentTime+dur);
+            o2.type='square';   o2.frequency.setValueAtTime(125,audioCtx.currentTime); o2.frequency.linearRampToValueAtTime(25,audioCtx.currentTime+dur);
+            g.gain.setValueAtTime(0.6,audioCtx.currentTime); g.gain.linearRampToValueAtTime(0.001,audioCtx.currentTime+dur);
+            o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
+            o1.start(); o2.start(); o1.stop(audioCtx.currentTime+dur); o2.stop(audioCtx.currentTime+dur);
+        }catch(e){}
+    }
+    function playPopDemandSound(){
+        if(!audioCtx) return;
+        try{
+            let o=audioCtx.createOscillator(), g=audioCtx.createGain();
+            o.type='sawtooth'; o.frequency.setValueAtTime(600,audioCtx.currentTime);
+            o.frequency.exponentialRampToValueAtTime(200,audioCtx.currentTime+0.15);
+            g.gain.setValueAtTime(0.4,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.15);
+            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.15);
+        }catch(e){}
+    }
+
+    window.openRedacted=function(){
+        document.getElementById('redacted-overlay').style.display='flex';
+        requestAnimationFrame(()=>{ if(!inited) init(); resize(); document.getElementById('rintro').style.display='flex'; document.getElementById('rmsg').style.display='none'; });
+    };
+    window.startRedacted=function(){ initAudio(); currentLevel=0; isJumpscaring=false; loadLevel(0); };
+
+    function loadLevel(lvlIndex){
+        if(!inited) init(); resize();
+        const raw=LEVEL_MAPS[lvlIndex]; ROWS=raw.length; COLS=raw[0].length;
+        map=raw.map(r=>[...r]); doors=[];
+        for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(map[r][c]===2) doors.push({r,c,open:false});
+        const lm=1.0+(lvlIndex*0.45);
+        enemies=ENEMY_LABELS.map((label,i)=>({
+            label, profile: ENEMY_PROFILES[label],
+            x:(COLS-2-(i%3))*CELL-0.5*CELL, y:(ROWS-2-Math.floor(i/3))*CELL-0.5*CELL,
+            baseSpeed:(0.9+i*0.12)*lm, speed:1.0,
+            angle:Math.random()*Math.PI*2, state:'WANDER', timer:0,
+            targetX:0, targetY:0, hasSpottedPlayer:false,
+            abilityCooldown:0, ambushReactionDelay:0
+        }));
+        player={x:1.5*CELL,y:1.5*CELL,angle:0,stamina:1,alive:true};
+        keys={}; mouseX=0; ePressed=false; canInteract=false; interactDoor=null; openedCount=0;
+        hudWarningText=""; hudWarningTimer=0; flashDimmedTimer=0; footstepTimer=0;
+        isJumpscaring=false;
+        popDemandActive=false; popDemandTimer=0; popDemandCooldown=3000;
+        popAngered=false; popAngeredTimer=0; popPlayerLooking=false;
+        document.getElementById('rintro').style.display='none';
+        document.getElementById('rmsg').style.display='none';
+        rRunning=true; canvas.requestPointerLock(); last=performance.now();
+        requestAnimationFrame(rloop);
+    }
+
+    function cellAt(r,c){ if(r<0||r>=ROWS||c<0||c>=COLS) return 1; return map[r][c]; }
+    function isBlocking(r,c){ const v=cellAt(r,c); if(v===1) return true; if(v===2){const d=doors.find(d=>d.r===r&&d.c===c); return d&&!d.open;} return false; }
+    function castRay(px,py,angle){ const dx=Math.cos(angle),dy=Math.sin(angle); let dist=0; while(dist<CELL*20){dist+=2;const col=Math.floor((px+dx*dist)/CELL),row=Math.floor((py+dy*dist)/CELL);if(isBlocking(row,col))return{dist,isDoor:cellAt(row,col)===2};}return{dist:CELL*20,isDoor:false}; }
+    function checkLineOfSight(x1,y1,x2,y2){ const dist=Math.hypot(x2-x1,y2-y1); const dx=(x2-x1)/dist,dy=(y2-y1)/dist; let s=0; while(s<dist){s+=4;if(isBlocking(Math.floor((y1+dy*s)/CELL),Math.floor((x1+dx*s)/CELL)))return false;} return true; }
+    function checkInteract(){ canInteract=false;interactDoor=null;const dx=Math.cos(player.angle),dy=Math.sin(player.angle);for(let s=0;s<CELL*1.2;s+=4){const col=Math.floor((player.x+dx*s)/CELL),row=Math.floor((player.y+dy*s)/CELL);const d=doors.find(d=>d.r===row&&d.c===col&&!d.open);if(d){canInteract=true;interactDoor=d;break;}} }
+    function handleInteract(){ if(keys['KeyE']&&!ePressed&&canInteract&&interactDoor){interactDoor.open=true;ePressed=true;} if(!keys['KeyE'])ePressed=false; }
+
+    function isPlayerFacingEnemy(e){
+        const dx=e.x-player.x, dy=e.y-player.y;
+        let a=Math.atan2(dy,dx)-player.angle;
+        while(a>Math.PI)a-=Math.PI*2; while(a<-Math.PI)a+=Math.PI*2;
+        return Math.abs(a)<0.38;
+    }
+
+    function moveEnemy(e,dt){
+        if(isJumpscaring) return;
+        const tdx=player.x-e.x, tdy=player.y-e.y, dist=Math.hypot(tdx,tdy);
+        e.timer-=dt;
+        if(e.abilityCooldown>0) e.abilityCooldown-=dt;
+        if(e.ambushReactionDelay>0){e.ambushReactionDelay-=dt;return;}
+
+        // ── Publish or Perish unique mechanic ──────────────────────────
+        if(e.label==='PUBLISH OR PERISH'){
+            const hasLOS=checkLineOfSight(e.x,e.y,player.x,player.y);
+            popPlayerLooking = isPlayerFacingEnemy(e) && dist < CELL*7;
+
+            if(popAngered){
+                popAngeredTimer-=dt;
+                if(popAngeredTimer<=0){ popAngered=false; popDemandCooldown=POP_DEMAND_COOLDOWN; }
+                e.speed=e.baseSpeed*2.6; // very fast when angry
+            } else {
+                e.speed=e.baseSpeed*1.0;
+            }
+
+            if(!popAngered){
+                if(popDemandActive){
+                    popDemandTimer-=dt;
+                    if(popPlayerLooking && hasLOS){
+                        // player complied — cancel demand
+                        popDemandActive=false;
+                        popDemandTimer=0;
+                        popDemandCooldown=POP_DEMAND_COOLDOWN;
+                        hudWarningText=""; hudWarningTimer=0;
+                    } else if(popDemandTimer<=0){
+                        // player ignored it — get angry
+                        popDemandActive=false;
+                        popAngered=true;
+                        popAngeredTimer=POP_ANGRY_DURATION;
+                        hudWarningText="IT IS FURIOUS"; hudWarningTimer=120;
+                    } else {
+                        // still demanding: flash message
+                        const urgency=popDemandTimer/POP_DEMAND_WINDOW;
+                        if(Math.floor(Date.now()/200)%2===0){
+                            hudWarningText="LOOK AT ME"; hudWarningTimer=5;
+                        }
+                    }
+                } else {
+                    popDemandCooldown-=dt;
+                    if(popDemandCooldown<=0 && dist<CELL*8 && hasLOS){
+                        popDemandActive=true;
+                        popDemandTimer=POP_DEMAND_WINDOW;
+                        hudWarningText="LOOK AT ME"; hudWarningTimer=5;
+                        playPopDemandSound();
+                    }
+                }
+            }
+        }
+        // ──────────────────────────────────────────────────────────────
+
+        let pAngle=Math.atan2(-tdy,-tdx)-player.angle;
+        while(pAngle>Math.PI)pAngle-=Math.PI*2; while(pAngle<-Math.PI)pAngle+=Math.PI*2;
+        const inPlayerFlashlight=(dist<CELL*5.2&&Math.abs(pAngle)<0.28);
+
+        let prev=e.state;
+        if(dist<CELL*2.5){
+            if(e.state==='AMBUSH')e.ambushReactionDelay=600;
+            e.state='CHASE';
+        } else if(e.state==='CHASE'&&dist>CELL*7.5){
+            e.state='WANDER';e.timer=0;e.hasSpottedPlayer=false;
+        } else if(e.state==='WANDER'&&dist<CELL*5.5){
+            const roll=Math.random();
+            if(roll<0.35)e.state='STALK'; else if(roll<0.7)e.state='AMBUSH'; else e.state='CHASE';
+            e.timer=4000+Math.random()*4000;
+        }
+        if(e.state!==prev&&(e.state==='CHASE'||e.state==='STALK'||e.state==='AMBUSH')){
+            if(!e.hasSpottedPlayer){playSpotSound(e.label==='FINALS WEEK'||e.label==='INTERNSHIP');e.hasSpottedPlayer=true;}
+        }
+
+        let tx=0,ty=0;
+        if(e.state==='CHASE'||e.state==='STALK'){
+            const hasLOS=checkLineOfSight(e.x,e.y,player.x,player.y);
+            if(e.label==='FINALS WEEK'&&dist<CELL*3.8&&hasLOS){
+                let ta=Math.atan2(tdy,tdx); let diff=ta-player.angle;
+                while(diff>Math.PI)diff-=Math.PI*2;while(diff<-Math.PI)diff+=Math.PI*2;
+                player.angle+=diff*0.035;
+            } else if(e.label==='INTERNSHIP'&&dist<CELL*5.5&&hasLOS){
+                if(e.abilityCooldown<=0&&hudWarningTimer<=0){
+                    hudWarningText="STOP MOVING AND APPLAUD!"; hudWarningTimer=120; e.abilityCooldown=6000;
+                }
+            }
+        }
+
+        if(e.state==='CHASE'){
+            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*(e.label==='INTERNSHIP'?1.05:1.35);
+            tx=tdx/dist; ty=tdy/dist;
+        } else if(e.state==='STALK'){
+            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*0.7;
+            if(inPlayerFlashlight){tx=-tdx/dist;ty=-tdy/dist;} else if(dist>CELL*3.2){tx=tdx/dist;ty=tdy/dist;}
+        } else if(e.state==='AMBUSH'){
+            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*1.25;
+            if(e.timer<=0||inPlayerFlashlight){tx=tdx/dist;ty=tdy/dist;e.state='CHASE';e.ambushReactionDelay=600;return;}
+            else{
+                if(!e.targetX||Math.hypot(e.x-e.targetX,e.y-e.targetY)<10){
+                    e.targetX=player.x+Math.cos(player.angle)*CELL*3+(Math.random()-0.5)*CELL;
+                    e.targetY=player.y+Math.sin(player.angle)*CELL*3+(Math.random()-0.5)*CELL;
+                }
+                const adx=e.targetX-e.x,ady=e.targetY-e.y,ad=Math.hypot(adx,ady);
+                if(ad>5){tx=adx/ad;ty=ady/ad;}
+            }
+        } else {
+            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*0.85;
+            else if(!popAngered) e.speed=e.baseSpeed*0.85;
+            if(e.timer<=0){e.angle=Math.random()*Math.PI*2;e.timer=2000+Math.random()*2500;}
+            tx=Math.cos(e.angle);ty=Math.sin(e.angle);
+        }
+
+        const nx=e.x+tx*e.speed,ny=e.y+ty*e.speed;
+        const ec=Math.floor(e.x/CELL),er=Math.floor(e.y/CELL);
+        if(!isBlocking(er,Math.floor(nx/CELL)))e.x=nx; else e.angle+=Math.PI*0.4;
+        if(!isBlocking(Math.floor(ny/CELL),ec))e.y=ny; else e.angle+=Math.PI*0.4;
+        if(Math.hypot(player.x-e.x,player.y-e.y)<22){stopAmbushDrone();triggerJumpscare(e.label,e.profile.color);}
+    }
+
+    function triggerJumpscare(killerLabel,col){
+        isJumpscaring=true; jumpscareTimer=750; jumpscareKiller=killerLabel; jumpscareColor=col||[255,0,0];
+        document.exitPointerLock(); playJumpscareSound();
+    }
+
+    function endGame(won,caughtBy){
+        rRunning=false;isJumpscaring=false;stopAmbushDrone();document.exitPointerLock();
+        const msgEl=document.getElementById('rmsg');
+        document.getElementById('rmsg-title').textContent=won?'GRADUATED':'ACADEMIC PROBATION';
+        document.getElementById('rmsg-title').style.color=won?'#fff':'#700';
+        document.getElementById('rmsg-body').textContent=won?'You survived the final gauntlet.':`Crushed by: ${caughtBy}`;
+        let old=document.getElementById('rmsg-btn'); if(old)old.remove();
+        msgEl.style.display='block'; player.alive=!won?false:true;
+    }
+
+    function displayLevelWinScreen(lvlIndex){
+        rRunning=false;stopAmbushDrone();document.exitPointerLock();
+        const sd=LEVEL_WIN_SCREENS[lvlIndex];
+        document.getElementById('rmsg-title').textContent=sd.title;
+        document.getElementById('rmsg-title').style.color='#00ff66';
+        document.getElementById('rmsg-body').textContent=sd.body;
+        let old=document.getElementById('rmsg-btn'); if(old)old.remove();
+        const btn=document.createElement('button');
+        btn.id='rmsg-btn'; btn.textContent=sd.btn;
+        btn.style.cssText='margin-top:20px;padding:10px 20px;background:#222;color:#fff;border:1px solid #00ff66;font-family:monospace;cursor:pointer;';
+        btn.onclick=()=>{ currentLevel++; loadLevel(currentLevel); };
+        document.getElementById('rmsg').appendChild(btn);
+        document.getElementById('rmsg').style.display='block';
+    }
+
+    function checkWin(){
+        if(isJumpscaring) return;
+        const nowOpen=doors.filter(d=>d.open).length;
+        if(nowOpen!==openedCount){
+            openedCount=nowOpen;
+            if(openedCount>=doors.length){
+                if(currentLevel<LEVEL_MAPS.length-1) displayLevelWinScreen(currentLevel);
+                else endGame(true,null);
+            }
+        }
+    }
+
+    // ── Draw distinct enemy sprite ──────────────────────────────────────
+    function drawEnemySprite(e, screenX, spriteH, spriteW, top, brightness, aiAlpha){
+        const p=e.profile;
+        const [cr,cg,cb]=p.color;
+        const pulse=e.state==='CHASE'?(0.4+0.6*Math.sin(Date.now()*0.025)):(0.8+0.2*Math.sin(Date.now()*0.003));
+        const rb=Math.floor(cr*(brightness||0.1)*pulse);
+        const gb=Math.floor(cg*(brightness||0.1)*pulse);
+        const bb=Math.floor(cb*(brightness||0.1)*pulse);
+        const col=`rgba(${rb},${gb},${bb},${aiAlpha})`;
+
+        ctx.save();
+
+        // glow halo
+        if(brightness>0.05||e.state==='AMBUSH'){
+            ctx.shadowBlur=20; ctx.shadowColor=p.glowColor; ctx.globalAlpha=aiAlpha*0.6;
+        }
+
+        // ── shape variants ──
+        if(p.shape==='diamond'){
+            // GPA 4.0 — sharp diamond: pristine, geometric perfection
+            const cx=screenX, cy=top+spriteH*0.5, hw=spriteW*0.45, hh=spriteH*0.42;
+            ctx.fillStyle=col;
+            ctx.beginPath();
+            ctx.moveTo(cx,cy-hh); ctx.lineTo(cx+hw,cy); ctx.lineTo(cx,cy+hh); ctx.lineTo(cx-hw,cy);
+            ctx.closePath(); ctx.fill();
+            // inner shine
+            ctx.globalAlpha=aiAlpha*0.4;
+            ctx.fillStyle=`rgba(255,255,255,${brightness*0.6})`;
+            ctx.beginPath();
+            ctx.moveTo(cx,cy-hh*0.55); ctx.lineTo(cx+hw*0.35,cy-hh*0.1); ctx.lineTo(cx,cy+hh*0.05); ctx.lineTo(cx-hw*0.35,cy-hh*0.1);
+            ctx.closePath(); ctx.fill();
+
+        } else if(p.shape==='tall'){
+            // THESIS DUE — tall thin pillar with crumbling top chunks
+            const cx=screenX, w=spriteW*0.35, h=spriteH*0.85;
+            ctx.globalAlpha=aiAlpha;
+            ctx.fillStyle=col;
+            ctx.fillRect(cx-w/2, top+spriteH*0.08, w, h);
+            // floating chunks above
+            for(let i=0;i<3;i++){
+                const ox=(i-1)*w*0.7, oy=spriteH*(0.02+i*0.015);
+                ctx.globalAlpha=aiAlpha*(0.6-i*0.15);
+                ctx.fillRect(cx+ox-w*0.22, top+oy, w*0.4, spriteH*0.06);
+            }
+
+        } else if(p.shape==='wide'){
+            // FINALS WEEK — squat wide mass with "eye" slots
+            const cx=screenX, w=spriteW*0.9, h=spriteH*0.55, ty=top+spriteH*0.25;
+            ctx.globalAlpha=aiAlpha;
+            ctx.fillStyle=col;
+            ctx.fillRect(cx-w/2,ty,w,h);
+            // dark "eyes"
+            ctx.fillStyle=`rgba(0,0,0,0.7)`;
+            ctx.fillRect(cx-w*0.28, ty+h*0.2, w*0.18, h*0.22);
+            ctx.fillRect(cx+w*0.10, ty+h*0.2, w*0.18, h*0.22);
+
+        } else if(p.shape==='split'){
+            // INTERNSHIP — two separate floating halves, a rift down the middle
+            const cx=screenX, hw=spriteW*0.36, h=spriteH*0.72, ty=top+spriteH*0.14;
+            const gap=spriteW*0.08;
+            ctx.globalAlpha=aiAlpha;
+            ctx.fillStyle=col;
+            ctx.fillRect(cx-hw-gap, ty, hw, h);
+            ctx.fillRect(cx+gap,     ty, hw, h);
+            // rift glow
+            const grad=ctx.createLinearGradient(cx,ty,cx,ty+h);
+            grad.addColorStop(0,`rgba(0,255,120,0)`);
+            grad.addColorStop(0.5,`rgba(0,255,120,${aiAlpha*0.5})`);
+            grad.addColorStop(1,`rgba(0,255,120,0)`);
+            ctx.fillStyle=grad;
+            ctx.fillRect(cx-gap,ty,gap*2,h);
+
+        } else if(p.shape==='orb'){
+            // PUBLISH OR PERISH — pulsating crimson orb, rage rings when angry
+            const cx=screenX, cy=top+spriteH*0.5, r=spriteH*0.38*p.size;
+            ctx.globalAlpha=aiAlpha;
+            ctx.fillStyle=col;
+            ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+            // core bright spot
+            ctx.globalAlpha=aiAlpha*brightness*0.7;
+            ctx.fillStyle=`rgba(255,180,180,0.8)`;
+            ctx.beginPath(); ctx.arc(cx-r*0.25,cy-r*0.25,r*0.3,0,Math.PI*2); ctx.fill();
+            // anger rings
+            if(popAngered){
+                const t=(Date.now()*0.006)%(Math.PI*2);
+                for(let i=0;i<3;i++){
+                    const rr=r+(i+1)*spriteH*0.07+Math.sin(t+i*1.2)*spriteH*0.04;
+                    ctx.globalAlpha=aiAlpha*(0.5-i*0.12);
+                    ctx.strokeStyle=`rgb(255,${Math.floor(30+i*20)},0)`;
+                    ctx.lineWidth=2+i;
+                    ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); ctx.stroke();
+                }
+            }
+        }
+
+        ctx.restore();
+    }
+
+    function render(){
+        if(isJumpscaring){
+            const [cr,cg,cb]=jumpscareColor;
+            ctx.fillStyle=Math.floor(Date.now()/40)%2===0?`rgb(${cr},${Math.floor(cg*0.3)},${Math.floor(cb*0.3)})`:'#000000';
+            ctx.fillRect(0,0,W,H);
+            ctx.fillStyle='#ffffff'; ctx.font='bold 48px monospace'; ctx.textAlign='center';
+            ctx.fillText(jumpscareKiller.toUpperCase(),W/2,H/2);
+            return;
+        }
+
+        const theme=LEVEL_THEMES[currentLevel]||LEVEL_THEMES[0];
+        ctx.fillStyle=theme.floor; ctx.fillRect(0,0,W,H);
+        if(flashDimmedTimer>0) flashDimmedTimer-=16;
+        const rayW=W/RAYS;
+
+        for(let i=0;i<RAYS;i++){
+            const ra=player.angle-FOV/2+(i/RAYS)*FOV;
+            const{dist,isDoor}=castRay(player.x,player.y,ra);
+            depthBuffer[i]=dist;
+            const corr=dist*Math.cos(ra-player.angle);
+            const wallH=Math.min(H,(CELL*H)/corr), top=(H-wallH)/2;
+            let ad=ra-player.angle; while(ad>Math.PI)ad-=Math.PI*2;while(ad<-Math.PI)ad+=Math.PI*2;
+            let bright=0;
+            const maxA=0.28;
+            if(Math.abs(ad)<maxA){
+                const ef=Math.cos((ad/maxA)*(Math.PI/2));
+                const tr=(flashDimmedTimer>0)?CELL*3.5:CELL*5.5;
+                const df=Math.max(0,1-(corr/tr)*(corr/tr));
+                bright=Math.min(1,ef*df*((flashDimmedTimer>0)?0.45:0.95));
+            }
+            if(isDoor){ctx.fillStyle=`rgb(${Math.floor(theme.door.r*bright)},${Math.floor(theme.door.g*bright)},${Math.floor(theme.door.b*bright)})`;}
+            else{ctx.fillStyle=`rgb(${Math.floor(theme.wall.r*bright)},${Math.floor(theme.wall.g*bright)},${Math.floor(theme.wall.b*bright)})`;}
+            ctx.fillRect(i*rayW,top,rayW+0.5,wallH);
+        }
+
+        enemies.forEach(e=>{
+            const ex=e.x-player.x,ey=e.y-player.y,dist=Math.hypot(ex,ey);
+            if(dist>CELL*15)return;
+            let dAngle=Math.atan2(ey,ex)-player.angle;
+            while(dAngle>Math.PI)dAngle-=Math.PI*2;while(dAngle<-Math.PI)dAngle+=Math.PI*2;
+            if(Math.abs(dAngle)>FOV*0.75)return;
+            const screenX=(0.5+dAngle/FOV)*W;
+            const ri=Math.floor(((dAngle+FOV/2)/FOV)*RAYS);
+            if(ri>=0&&ri<RAYS&&depthBuffer[ri]<dist-15)return;
+            const spriteH=Math.min(H*2,(CELL*H)/dist)*e.profile.size;
+            const spriteW=spriteH*0.6;
+            const top=(H-spriteH)/2;
+            let bright=0;
+            const maxA=0.28;
+            if(Math.abs(dAngle)<maxA){
+                const ef=Math.cos((dAngle/maxA)*(Math.PI/2));
+                const tr=(flashDimmedTimer>0)?CELL*3.5:CELL*5.5;
+                bright=Math.min(1,ef*Math.max(0,1-(dist/tr)*(dist/tr))*((flashDimmedTimer>0)?0.45:0.95));
+            }
+            let aiAlpha=bright;
+            if(e.state==='AMBUSH')aiAlpha=Math.max(0.22,bright);
+            else if(e.state==='STALK')aiAlpha=Math.max(0.02,bright);
+            else if(e.state==='CHASE')aiAlpha=Math.max(0.12,aiAlpha);
+            // Publish or Perish glows brighter when angry
+            if(e.label==='PUBLISH OR PERISH'&&popAngered)aiAlpha=Math.max(0.55,aiAlpha);
+
+            drawEnemySprite(e,screenX,spriteH,spriteW,top,bright,aiAlpha);
+
+            // label
+            if(dist<CELL*4&&(bright>0.12||e.state==='AMBUSH')){
+                const alpha=Math.min(1,(CELL*4-dist)/(CELL*1.5));
+                ctx.globalAlpha=alpha*(e.state==='AMBUSH'?0.4:bright);
+                const [cr,cg,cb]=e.profile.color;
+                ctx.fillStyle=`rgb(${cr},${cg},${cb})`;
+                ctx.font=`bold ${Math.max(10,Math.floor(13*(CELL/dist)))}px monospace`;
+                ctx.textAlign='center';
+                ctx.fillText(e.state==='AMBUSH'&&dist>CELL*2.5?'???':e.label,screenX,top+spriteH*0.05);
+                ctx.globalAlpha=1;
+            }
+        });
+
+        // HUD warning / demand flash
+        if(hudWarningTimer>0&&hudWarningText!==""){
+            const isPopMsg=hudWarningText==="LOOK AT ME"||hudWarningText==="IT IS FURIOUS";
+            const flicker=isPopMsg?(Math.floor(Date.now()/80)%2===0?1:0.4):1;
+            ctx.fillStyle=isPopMsg?`rgba(255,0,0,${Math.min(1,hudWarningTimer/30)*flicker})`:`rgba(255,0,0,${Math.min(1,hudWarningTimer/30)})`;
+            ctx.font=`bold ${isPopMsg?32:24}px monospace`;
+            ctx.textAlign='center';
+            ctx.fillText(hudWarningText,W/2,H*0.3);
+            ctx.globalAlpha=1;
+        }
+
+        // Publish or Perish demand countdown bar
+        if(popDemandActive){
+            const pct=popDemandTimer/POP_DEMAND_WINDOW;
+            const bw=W*0.35, bh=8, bx=(W-bw)/2, by=H*0.38;
+            ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(bx,by,bw,bh);
+            ctx.fillStyle=`rgb(255,${Math.floor(pct*80)},0)`; ctx.fillRect(bx,by,bw*pct,bh);
+        }
+        if(popAngered){
+            const pct=popAngeredTimer/POP_ANGRY_DURATION;
+            ctx.fillStyle=`rgba(255,0,0,${0.08*(1+Math.sin(Date.now()*0.01))})`;
+            ctx.fillRect(0,0,W,H);
+        }
+    }
+
+    function rupdate(ts){
+        const dt=ts-last;last=ts; if(!player.alive)return;
+        if(isJumpscaring){jumpscareTimer-=dt;if(jumpscareTimer<=0)endGame(false,jumpscareKiller);return;}
+        if(hudWarningTimer>0){hudWarningTimer-=dt/16;if(hudWarningTimer<=0)hudWarningText="";}
+
+        player.angle+=mouseX*0.002;mouseX=0;
+        const sprinting=keys['ShiftLeft']||keys['ShiftRight'];
+        const moving=keys['KeyW']||keys['KeyS']||keys['KeyA']||keys['KeyD'];
+        if(moving){
+            if(hudWarningTimer>0) player.stamina=Math.max(0,player.stamina-STAM_DRAIN*3);
+            else if(sprinting) player.stamina=Math.max(0,player.stamina-STAM_DRAIN);
+            else player.stamina=Math.min(1,player.stamina+STAM_REGEN);
+            footstepTimer+=dt;
+            const thr=(sprinting&&player.stamina>0)?260:420;
+            if(footstepTimer>=thr){playFootstepSound(sprinting&&player.stamina>0);footstepTimer=0;}
+        } else { player.stamina=Math.min(1,player.stamina+STAM_REGEN); footstepTimer=0; }
+
+        const spd=(sprinting&&player.stamina>0)?RUN_S:MOVE_S;
+        let mx=0,my=0;
+        if(keys['KeyW']){mx+=Math.cos(player.angle);my+=Math.sin(player.angle);}
+        if(keys['KeyS']){mx-=Math.cos(player.angle);my-=Math.sin(player.angle);}
+        if(keys['KeyA']){mx+=Math.cos(player.angle-Math.PI/2);my+=Math.sin(player.angle-Math.PI/2);}
+        if(keys['KeyD']){mx+=Math.cos(player.angle+Math.PI/2);my+=Math.sin(player.angle+Math.PI/2);}
+        const ml=Math.hypot(mx,my);if(ml>0){mx/=ml;my/=ml;}
+        const nx=player.x+mx*spd,ny=player.y+my*spd,M=12;
+        if(!isBlocking(Math.floor(player.y/CELL),Math.floor((nx+(M*Math.sign(mx)||M))/CELL)))player.x=nx;
+        if(!isBlocking(Math.floor((ny+(M*Math.sign(my)||M))/CELL),Math.floor(player.x/CELL)))player.y=ny;
+        checkInteract();handleInteract();
+        enemies.forEach(e=>moveEnemy(e,dt));
+        updateAmbushDroneAudio();
+        checkWin();
+        document.getElementById('rstam').style.width=(player.stamina*100)+'%';
+        if(canInteract){document.getElementById('rprompt').textContent='PRESS [E] TO UNLOCK DOOR';document.getElementById('rprompt').style.opacity='1';}
+        else{document.getElementById('rprompt').style.opacity='0';}
+        document.getElementById('rdoors').textContent=`DOORS ${doors.filter(d=>d.open).length} / ${doors.length}`;
+        const nearest=Math.min(...enemies.map(e=>Math.hypot(e.x-player.x,e.y-player.y)));
+        const danger=Math.max(0,1-nearest/(CELL*3));
+        document.getElementById('rblood').style.background=`radial-gradient(ellipse at center, transparent 40%, rgba(160,0,0,${danger*0.6}) 100%)`;
+    }
+
+    function rloop(ts=0){if(!rRunning)return;rupdate(ts);render();requestAnimationFrame(rloop);}
+})();
+</script>
+</body>
+</html>
