@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <style>
+                        .project-image img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: contain; /* Keeps the logo's aspect ratio perfect without cropping it */
+                            display: block;
+                        }</style>
+                        <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
     <style>
@@ -122,7 +129,9 @@
         <section class="section">
             <h2 class="section-title">About Me</h2>
             <div class="about-grid">
-                <div class="profile-img-placeholder"><span>[ Profile Image ]</span></div>
+                <div class="profile-img-placeholder"><span>
+                    <img src="https://th.bing.com/th/id/OIP.0SXXQ143x-KSSWtN9xhiIwHaE8?w=278&h=185&c=7&r=0&o=7&pid=1.7&rm=3" alt="student">
+                </span></div>
                 <div class="about-text">
                     <p>I am a student, I study. I also occasionally use Blender</p>
                     <p>I also do other things outside of studying, and Blender like &#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;&#x2588;</p>
@@ -134,7 +143,10 @@
             <div class="projects-grid">
 
                 <div class="project-card">
-                    <div class="project-image"><span>[ Image Placeholder ]</span></div>
+                    <div class="project-image">
+                        
+                        <img src="https://tse1.mm.bing.net/th/id/OIP.t4KvmWL7j9beIv9lC9vSlgHaHa?rs=1&pid=ImgDetMain&o=7&rm=3" alt="academics">
+                    </div>
                     <div class="project-info">
                         <h3>Academics</h3>
                         <p>Achieved 3-4 academic achievers in SIS school programme.</p>
@@ -144,7 +156,9 @@
                 </div>
 
                 <div class="project-card" style="cursor:pointer;" onclick="openBlender()">
-                    <div class="project-image"><span>[ Image Placeholder ]</span></div>
+                    <div class="project-image">
+                        <img src="https://th.bing.com/th/id/OIP.wC7MSdq2Ih1Va3-jXUG-dAHaEM?w=321&h=182&c=7&r=0&o=7&pid=1.7&rm=3" alt="Blender Logo">
+                    </div>
                     <div class="project-info">
                         <h3>Blender</h3>
                         <p>I've messed around with it, haven't done any actual work...but soon</p>
@@ -400,7 +414,16 @@ window.blenderCycleMain = function () {
 /* ── REDACTED GAME ───────────────────────────────────────────── */
 (function () {
     const CELL=80;
-    
+
+    // Level 1 introduces enemies one at a time as doors are opened.
+    // Level 2 and 3 have all enemies active from the start.
+    const LEVEL_ENEMY_UNLOCK = [
+        // level 1: unlock thresholds (doors opened required to activate each enemy)
+        { 'GPA 4.0': 0, 'THESIS DUE': 2, 'FINALS WEEK': 3, 'INTERNSHIP': 4, 'PUBLISH OR PERISH': 5 },
+        null, // all active
+        null, // all active
+    ];
+
     const LEVEL_MAPS = [
         [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -468,38 +491,70 @@ window.blenderCycleMain = function () {
         { wall:{r:90,g:15,b:25},   door:{r:190,g:10,b:10},  floor:"#000000" }
     ];
 
-    // Visual profile for each enemy
     const ENEMY_PROFILES = {
-        'GPA 4.0':          { color:[220,220,220], shape:'diamond',  size:1.0, glowColor:'rgba(220,220,255,0.3)' },
-        'THESIS DUE':       { color:[180,80,255],  shape:'tall',     size:1.2, glowColor:'rgba(180,80,255,0.25)' },
-        'FINALS WEEK':      { color:[255,160,0],   shape:'wide',     size:1.1, glowColor:'rgba(255,160,0,0.3)'   },
-        'INTERNSHIP':       { color:[0,200,120],   shape:'split',    size:0.9, glowColor:'rgba(0,200,120,0.2)'   },
-        'PUBLISH OR PERISH':{ color:[255,30,30],   shape:'orb',      size:1.3, glowColor:'rgba(255,0,0,0.4)'     },
+        'GPA 4.0':          { color:[220,220,220], shape:'diamond', size:1.0,  glowColor:'rgba(220,220,255,0.3)' },
+        'THESIS DUE':       { color:[180,80,255],  shape:'tall',    size:1.2,  glowColor:'rgba(180,80,255,0.25)' },
+        'FINALS WEEK':      { color:[180,180,160], shape:'angel',   size:1.25, glowColor:'rgba(200,200,180,0.2)' },
+        'INTERNSHIP':       { color:[0,200,120],   shape:'split',   size:0.9,  glowColor:'rgba(0,200,120,0.2)'   },
+        'PUBLISH OR PERISH':{ color:[255,30,30],   shape:'orb',     size:1.3,  glowColor:'rgba(255,0,0,0.4)'     },
     };
 
-    let currentLevel = 0;
+    // Codex shown on the intro screen
+    const ENEMY_CODEX = [
+        {
+            label: 'GPA 4.0',
+            color: '#dddde8',
+            shape: 'diamond',
+            intro: 'Unlocked immediately.',
+            desc: 'A relentless, clean pursuer. No special tricks — just raw speed and persistence. The benchmark everything else is worse than.',
+        },
+        {
+            label: 'THESIS DUE',
+            color: '#b450ff',
+            shape: 'tall',
+            intro: 'Unlocked after 2 doors.',
+            desc: 'No special ability. Its pressure is purely psychological — it never gives up and never slows down. Treat it like a deadline.',
+        },
+        {
+            label: 'FINALS WEEK',
+            color: '#b4b4a0',
+            shape: 'angel',
+            intro: 'Unlocked after 3 doors.',
+            desc: 'A weeping angel. Completely frozen while you look at it. The moment you look away it teleports closer and charges at extreme speed. Never take your eyes off it.',
+        },
+        {
+            label: 'INTERNSHIP',
+            color: '#00c878',
+            shape: 'split',
+            intro: 'Unlocked after 4 doors.',
+            desc: 'Occasionally demands you stop and applaud. While its warning is on screen, moving drains your stamina three times faster. Running through the demand is costly.',
+        },
+        {
+            label: 'PUBLISH OR PERISH',
+            color: '#ff2222',
+            shape: 'orb',
+            intro: 'Unlocked after 5 doors.',
+            desc: 'Periodically flashes LOOK AT ME. You have a narrow window to face it or it enters a furious state — speed more than doubles and it does not calm down for six seconds.',
+        },
+    ];
+
+    let currentLevel=0;
     const FOV=Math.PI/3, RAYS=320, MOVE_S=2.2, RUN_S=3.8, STAM_DRAIN=0.004, STAM_REGEN=0.002;
     const ENEMY_LABELS=['GPA 4.0','THESIS DUE','FINALS WEEK','INTERNSHIP','PUBLISH OR PERISH'];
-    let canvas,ctx,W,H,map,doors,enemies,player,keys,mouseX,rRunning,last,ePressed,canInteract,interactDoor,openedCount,inited=false;
-    let audioCtx=null;
-    let hudWarningText="", hudWarningTimer=0;
+    let canvas,ctx,W,H,map,doors,enemies,player,keys,mouseX,rRunning,last;
+    let ePressed,canInteract,interactDoor,openedCount,inited=false;
+    let hudWarningText="",hudWarningTimer=0;
     let flashDimmedTimer=0;
     let depthBuffer=new Array(RAYS);
     let ROWS,COLS;
     let footstepTimer=0;
-    let isJumpscaring=false, jumpscareTimer=0, jumpscareKiller="", jumpscareColor=[255,0,0];
-    let ambushDroneOsc=null, ambushDroneGain=null;
+    let isJumpscaring=false,jumpscareTimer=0,jumpscareKiller="",jumpscareColor=[255,0,0];
+    let popDemandActive=false,popDemandTimer=0,popDemandCooldown=0;
+    let popPlayerLooking=false,popAngered=false,popAngeredTimer=0;
+    const POP_DEMAND_WINDOW=2800,POP_DEMAND_COOLDOWN=7000,POP_ANGRY_DURATION=6000;
 
-    // Publish or Perish demand mechanic
-    let popDemandActive=false;       // currently demanding player looks at it
-    let popDemandTimer=0;            // countdown ms player has to comply
-    let popDemandCooldown=0;         // cooldown before next demand
-    let popPlayerLooking=false;      // is player facing it right now
-    let popAngered=false;            // has the demand been ignored?
-    let popAngeredTimer=0;           // how long angry state lasts
-    const POP_DEMAND_WINDOW=2800;    // ms to look before getting angry
-    const POP_DEMAND_COOLDOWN=7000;  // ms between demands
-    const POP_ANGRY_DURATION=6000;   // ms of boosted speed
+    // ── codex overlay state
+    let codexOpen=false, codexPage=0;
 
     function init(){
         canvas=document.getElementById('rc'); ctx=canvas.getContext('2d');
@@ -512,147 +567,323 @@ window.blenderCycleMain = function () {
     }
     function resize(){ if(!canvas) return; W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
 
-    function initAudio(){ if(!audioCtx){ audioCtx=new(window.AudioContext||window.webkitAudioContext)(); createAmbushDroneNode(); } }
+    // ==========================================
+// 1. GLOBAL AUDIO VARIABLES
+// ==========================================
+let audioCtx = null;
+let droneNodes = [];
+let backroomsDroneNodes = [];
+let ambushDroneGain = null;
 
-    function createAmbushDroneNode(){
-        if(!audioCtx) return;
-        try{
-            ambushDroneOsc=audioCtx.createOscillator(); ambushDroneGain=audioCtx.createGain();
-            ambushDroneOsc.type='sawtooth'; ambushDroneOsc.frequency.setValueAtTime(100,audioCtx.currentTime);
-            ambushDroneGain.gain.setValueAtTime(0,audioCtx.currentTime);
-            ambushDroneOsc.connect(ambushDroneGain); ambushDroneGain.connect(audioCtx.destination);
-            ambushDroneOsc.start();
-        }catch(e){}
+// ==========================================
+// 2. INITIALIZATION & CORE LIFECYCLE
+// ==========================================
+function initAudio(){ 
+    if(!audioCtx){ 
+        audioCtx = new(window.AudioContext || window.webkitAudioContext)(); 
+        createBackroomsHumNode(); // Starts the constant fluorescent hum
+        createAmbushDroneNode();  // Prepares the enemy ambush oscillators
+    } 
+}
+
+function resize(){ 
+    if(!canvas) return; 
+    W = canvas.width = canvas.offsetWidth; 
+    H = canvas.height = canvas.offsetHeight; 
+}
+
+// ==========================================
+// 3. AMBIENT & DRONE NODE GENERATION
+// ==========================================
+function createBackroomsHumNode() {
+    if(!audioCtx) return;
+    try {
+        const lpFilter = audioCtx.createBiquadFilter();
+        lpFilter.type = 'lowpass';
+        lpFilter.frequency.setValueAtTime(350, audioCtx.currentTime); // Slightly lower ceiling for muddier sound
+
+        // Sub/Low hum 
+        const lowOsc = audioCtx.createOscillator();
+        const lowGain = audioCtx.createGain();
+        lowOsc.type = 'triangle';
+        lowOsc.frequency.setValueAtTime(60, audioCtx.currentTime); 
+        lowGain.gain.setValueAtTime(0.12, audioCtx.currentTime); // Made much quieter
+
+        // Fluorescent Buzz
+        const buzzOsc = audioCtx.createOscillator();
+        const buzzGain = audioCtx.createGain();
+        buzzOsc.type = 'sawtooth';
+        buzzOsc.frequency.setValueAtTime(120, audioCtx.currentTime); 
+        buzzGain.gain.setValueAtTime(0.02, audioCtx.currentTime); // Made much quieter
+
+        // LFO Flicker
+        const flickerLfo = audioCtx.createOscillator();
+        const flickerGain = audioCtx.createGain();
+        flickerLfo.type = 'sine';
+        flickerLfo.frequency.setValueAtTime(0.35, audioCtx.currentTime); 
+        flickerGain.gain.setValueAtTime(1.2, audioCtx.currentTime); 
+
+        flickerLfo.connect(flickerGain);
+        flickerGain.connect(buzzOsc.frequency); 
+        lowOsc.connect(lowGain);
+        buzzOsc.connect(buzzGain);
+        lowGain.connect(lpFilter);
+        buzzGain.connect(lpFilter);
+        lpFilter.connect(audioCtx.destination);
+
+        lowOsc.start();
+        buzzOsc.start();
+        flickerLfo.start();
+
+        // Save node references along with their oscillators so they can be completely stopped
+        backroomsDroneNodes = [
+            { gainNode: lowGain, baseVol: 0.12, osc: lowOsc },
+            { gainNode: buzzGain, baseVol: 0.02, osc: buzzOsc },
+            { filterNode: lpFilter, baseFreq: 350, osc: flickerLfo }
+        ];
+    } catch(e) {}
+}
+function createAmbushDroneNode(){
+    if(!audioCtx) return;
+    try{
+        const sub=audioCtx.createOscillator(), subG=audioCtx.createGain();
+        sub.type='sine'; sub.frequency.setValueAtTime(48,audioCtx.currentTime);
+        subG.gain.setValueAtTime(0,audioCtx.currentTime);
+        sub.connect(subG); subG.connect(audioCtx.destination); sub.start();
+
+        const mid=audioCtx.createOscillator(), midG=audioCtx.createGain();
+        const lfo=audioCtx.createOscillator(), lfoG=audioCtx.createGain();
+        mid.type='sawtooth'; mid.frequency.setValueAtTime(92,audioCtx.currentTime);
+        lfo.type='sine'; lfo.frequency.setValueAtTime(0.18,audioCtx.currentTime);
+        lfoG.gain.setValueAtTime(7,audioCtx.currentTime);
+        lfo.connect(lfoG); lfoG.connect(mid.frequency);
+        midG.gain.setValueAtTime(0,audioCtx.currentTime);
+        mid.connect(midG); midG.connect(audioCtx.destination); mid.start(); lfo.start();
+
+        const hi=audioCtx.createOscillator(), hiG=audioCtx.createGain();
+        hi.type='triangle'; hi.frequency.setValueAtTime(310,audioCtx.currentTime);
+        hiG.gain.setValueAtTime(0,audioCtx.currentTime);
+        hi.connect(hiG); hiG.connect(audioCtx.destination); hi.start();
+
+        droneNodes=[
+            {osc:sub, gain:subG, targetVol:0.22},
+            {osc:mid, gain:midG, targetVol:0.13},
+            {osc:hi,  gain:hiG,  targetVol:0.05},
+        ];
+        ambushDroneGain=subG;
+    }catch(e){}
+}
+
+// ==========================================
+// 4. DYNAMIC AUDIO UPDATE LOOP
+// ==========================================
+function updateAmbushDroneAudio(){
+    if(!audioCtx || droneNodes.length === 0) return;
+    let hi = 0;
+    enemies.forEach(e => { 
+        if(e.state === 'AMBUSH' && !e._locked){ 
+            const d = Math.hypot(player.x - e.x, player.y - e.y); 
+            const t = Math.max(0, 1 - (d / (CELL * 5.5))); 
+            if(t > hi) hi = t; 
+        }
+    });
+
+    try {
+        // Handle enemy threat intensity drone audio
+        droneNodes.forEach(n => { n.gain.gain.setTargetAtTime(hi * n.targetVol, audioCtx.currentTime, 0.18); });
+        if(hi > 0 && droneNodes[1]){
+            const drift = 92 + hi * 18 + Math.sin(Date.now() * 0.0007) * 4;
+            droneNodes[1].osc.frequency.setTargetAtTime(drift, audioCtx.currentTime, 0.3);
+        }
+
+        // Handle dynamic backrooms background hum ducking/muffling
+        if(backroomsDroneNodes.length === 3) {
+            const duckFactor = 1 - (hi * 0.5); // Drops volume down up to 50% when fully targeted
+            
+            backroomsDroneNodes[0].gainNode.gain.setTargetAtTime(backroomsDroneNodes[0].baseVol * duckFactor, audioCtx.currentTime, 0.2);
+            backroomsDroneNodes[1].gainNode.gain.setTargetAtTime(backroomsDroneNodes[1].baseVol * duckFactor, audioCtx.currentTime, 0.2);
+            
+            // Smothers the room frequencies down from 400Hz to 180Hz as threat nears
+            const dynamicFilterFreq = backroomsDroneNodes[2].baseFreq - (hi * 220);
+            backroomsDroneNodes[2].filterNode.frequency.setTargetAtTime(dynamicFilterFreq, audioCtx.currentTime, 0.25);
+        }
+    } catch(e){}
+}
+
+function stopAmbushDrone(){ 
+    try{ droneNodes.forEach(n=>{ n.gain.gain.setTargetAtTime(0,audioCtx.currentTime,0.08); }); }catch(e){} 
+}
+
+// ==========================================
+// 5. ONE-SHOT SOUND EFFECTS
+// ==========================================
+function playSpotSound(special){
+    if(!audioCtx) return;
+    try{
+        let o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.type=special?'sawtooth':'triangle';
+        o.frequency.setValueAtTime(special?380:180,audioCtx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(40,audioCtx.currentTime+0.4);
+        g.gain.setValueAtTime(0.3,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.4);
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.4);
+    }catch(e){}
+}
+
+function playFootstepSound(sprint){
+    if(!audioCtx) return;
+    try{
+        let o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.type='sine'; o.frequency.setValueAtTime(sprint?75:55,audioCtx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(20,audioCtx.currentTime+0.12);
+        g.gain.setValueAtTime(sprint?0.25:0.15,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.12);
+    }catch(e){}
+}
+
+function playJumpscareSound(){
+    if(!audioCtx) return;
+    try{
+        let dur=0.75;
+        let o1=audioCtx.createOscillator(),o2=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o1.type='sawtooth'; o1.frequency.setValueAtTime(120,audioCtx.currentTime); o1.frequency.linearRampToValueAtTime(30,audioCtx.currentTime+dur);
+        o2.type='square';   o2.frequency.setValueAtTime(125,audioCtx.currentTime); o2.frequency.linearRampToValueAtTime(25,audioCtx.currentTime+dur);
+        g.gain.setValueAtTime(0.6,audioCtx.currentTime); g.gain.linearRampToValueAtTime(0.001,audioCtx.currentTime+dur);
+        o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
+        o1.start(); o2.start(); o1.stop(audioCtx.currentTime+dur); o2.stop(audioCtx.currentTime+dur);
+    }catch(e){}
+}
+
+function playPopDemandSound(){
+    if(!audioCtx) return;
+    try{
+        let o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.type='sawtooth'; o.frequency.setValueAtTime(600,audioCtx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(200,audioCtx.currentTime+0.15);
+        g.gain.setValueAtTime(0.4,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.15);
+        o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.15);
+    }catch(e){}
+}
+    // ── Codex rendering ──────────────────────────────────────────────
+    function drawMiniShape(ctx2, shape, color, cx, cy, r){
+        const [cr,cg,cb]=color;
+        ctx2.fillStyle=`rgb(${cr},${cg},${cb})`;
+        ctx2.strokeStyle=`rgba(${cr},${cg},${cb},0.5)`;
+        ctx2.lineWidth=1.5;
+        if(shape==='diamond'){
+            ctx2.beginPath(); ctx2.moveTo(cx,cy-r); ctx2.lineTo(cx+r*0.7,cy); ctx2.lineTo(cx,cy+r); ctx2.lineTo(cx-r*0.7,cy); ctx2.closePath(); ctx2.fill();
+        } else if(shape==='tall'){
+            ctx2.fillRect(cx-r*0.28,cy-r,r*0.56,r*1.9);
+        } else if(shape==='angel'){
+            // head
+            ctx2.beginPath(); ctx2.arc(cx,cy-r*0.55,r*0.28,0,Math.PI*2); ctx2.fill();
+            // body
+            ctx2.beginPath(); ctx2.moveTo(cx-r*0.22,cy-r*0.28); ctx2.lineTo(cx+r*0.22,cy-r*0.28); ctx2.lineTo(cx+r*0.38,cy+r); ctx2.lineTo(cx-r*0.38,cy+r); ctx2.closePath(); ctx2.fill();
+            // wings
+            ctx2.globalAlpha*=0.7;
+            ctx2.beginPath(); ctx2.moveTo(cx-r*0.18,cy-r*0.1); ctx2.quadraticCurveTo(cx-r*0.9,cy-r*0.4,cx-r*0.55,cy+r*0.7); ctx2.lineTo(cx-r*0.22,cy+r*0.5); ctx2.closePath(); ctx2.fill();
+            ctx2.beginPath(); ctx2.moveTo(cx+r*0.18,cy-r*0.1); ctx2.quadraticCurveTo(cx+r*0.9,cy-r*0.4,cx+r*0.55,cy+r*0.7); ctx2.lineTo(cx+r*0.22,cy+r*0.5); ctx2.closePath(); ctx2.fill();
+            ctx2.globalAlpha=1;
+        } else if(shape==='split'){
+            ctx2.fillRect(cx-r*0.65,cy-r,r*0.42,r*1.9);
+            ctx2.fillRect(cx+r*0.23,cy-r,r*0.42,r*1.9);
+            const grad=ctx2.createLinearGradient(cx,cy-r,cx,cy+r);
+            grad.addColorStop(0,`rgba(0,255,120,0)`); grad.addColorStop(0.5,`rgba(0,255,120,0.6)`); grad.addColorStop(1,`rgba(0,255,120,0)`);
+            ctx2.fillStyle=grad; ctx2.fillRect(cx-r*0.12,cy-r,r*0.24,r*1.9);
+        } else if(shape==='orb'){
+            ctx2.beginPath(); ctx2.arc(cx,cy,r*0.75,0,Math.PI*2); ctx2.fill();
+            ctx2.globalAlpha*=0.5; ctx2.fillStyle='rgba(255,180,180,0.8)';
+            ctx2.beginPath(); ctx2.arc(cx-r*0.22,cy-r*0.22,r*0.25,0,Math.PI*2); ctx2.fill();
+            ctx2.globalAlpha=1;
+        }
     }
 
-    // Ambush drone: layered oscillators for a more unsettling sound
-    let droneNodes = [];
+    function renderCodex(){
+        const entry=ENEMY_CODEX[codexPage];
+        const [cr,cg,cb]=ENEMY_PROFILES[entry.label].color;
+        const W2=W, H2=H;
+        const panelW=Math.min(680,W2-40), panelH=Math.min(480,H2-60);
+        const px=(W2-panelW)/2, py=(H2-panelH)/2;
 
-    function createAmbushDroneNode(){
-        if(!audioCtx) return;
-        try{
-            // Layer 1: low sub rumble
-            const sub = audioCtx.createOscillator();
-            const subGain = audioCtx.createGain();
-            sub.type = 'sine';
-            sub.frequency.setValueAtTime(48, audioCtx.currentTime);
-            subGain.gain.setValueAtTime(0, audioCtx.currentTime);
-            sub.connect(subGain); subGain.connect(audioCtx.destination);
-            sub.start();
+        // Backdrop
+        ctx.fillStyle='rgba(0,0,0,0.88)'; ctx.fillRect(0,0,W2,H2);
+        ctx.fillStyle='#0a0a0a'; ctx.fillRect(px,py,panelW,panelH);
+        ctx.strokeStyle=`rgba(${cr},${cg},${cb},0.6)`; ctx.lineWidth=1; ctx.strokeRect(px,py,panelW,panelH);
 
-            // Layer 2: mid sawtooth with slow LFO pitch wobble
-            const mid = audioCtx.createOscillator();
-            const midGain = audioCtx.createGain();
-            const lfo = audioCtx.createOscillator();
-            const lfoGain = audioCtx.createGain();
-            mid.type = 'sawtooth';
-            mid.frequency.setValueAtTime(92, audioCtx.currentTime);
-            lfo.type = 'sine';
-            lfo.frequency.setValueAtTime(0.18, audioCtx.currentTime);
-            lfoGain.gain.setValueAtTime(7, audioCtx.currentTime);
-            lfo.connect(lfoGain); lfoGain.connect(mid.frequency);
-            midGain.gain.setValueAtTime(0, audioCtx.currentTime);
-            mid.connect(midGain); midGain.connect(audioCtx.destination);
-            mid.start(); lfo.start();
+        // Header
+        ctx.fillStyle=`rgb(${cr},${cg},${cb})`;
+        ctx.font=`bold 11px monospace`; ctx.textAlign='left';
+        ctx.fillText('THREAT CODEX',px+20,py+22);
+        ctx.fillStyle='#333'; ctx.font='10px monospace'; ctx.textAlign='right';
+        ctx.fillText(`${codexPage+1} / ${ENEMY_CODEX.length}`,px+panelW-20,py+22);
 
-            // Layer 3: high thin whistle for unease
-            const hi = audioCtx.createOscillator();
-            const hiGain = audioCtx.createGain();
-            hi.type = 'triangle';
-            hi.frequency.setValueAtTime(310, audioCtx.currentTime);
-            hiGain.gain.setValueAtTime(0, audioCtx.currentTime);
-            hi.connect(hiGain); hiGain.connect(audioCtx.destination);
-            hi.start();
+        // Divider
+        ctx.strokeStyle=`rgba(${cr},${cg},${cb},0.3)`; ctx.lineWidth=0.5;
+        ctx.beginPath(); ctx.moveTo(px+14,py+30); ctx.lineTo(px+panelW-14,py+30); ctx.stroke();
 
-            droneNodes = [
-                { osc: sub, gain: subGain,  targetVol: 0.22 },
-                { osc: mid, gain: midGain,  targetVol: 0.13 },
-                { osc: hi,  gain: hiGain,   targetVol: 0.05 },
-            ];
-            // keep legacy refs so stopAmbushDrone still works
-            ambushDroneGain = subGain;
-        }catch(e){}
+        // Mini sprite preview
+        const previewX=px+panelW-90, previewY=py+80, previewR=42;
+        ctx.save();
+        ctx.globalAlpha=0.9;
+        drawMiniShape(ctx,entry.shape,[cr,cg,cb],previewX,previewY,previewR);
+        ctx.restore();
+
+        // Entry label
+        ctx.fillStyle=`rgb(${cr},${cg},${cb})`;
+        ctx.font=`bold 22px monospace`; ctx.textAlign='left';
+        ctx.fillText(entry.label,px+20,py+62);
+
+        // Intro / unlock note
+        ctx.fillStyle='#555'; ctx.font='11px monospace';
+        ctx.fillText(entry.intro,px+20,py+80);
+
+        // Desc — word wrap
+        ctx.fillStyle='#aaa'; ctx.font='13px monospace';
+        const maxW=panelW-140, words=entry.desc.split(' ');
+        let line='', lineY=py+115;
+        for(const w of words){
+            const test=line+w+' ';
+            if(ctx.measureText(test).width>maxW&&line!==''){
+                ctx.fillText(line.trim(),px+20,lineY); line=w+' '; lineY+=20;
+            } else { line=test; }
+        }
+        if(line.trim()) ctx.fillText(line.trim(),px+20,lineY);
+
+        // Level 1 unlock announcement area
+        lineY+=36;
+        ctx.strokeStyle='rgba(255,255,255,0.07)'; ctx.lineWidth=0.5;
+        ctx.beginPath(); ctx.moveTo(px+14,lineY-10); ctx.lineTo(px+panelW-14,lineY-10); ctx.stroke();
+        ctx.fillStyle='#333'; ctx.font='10px monospace'; ctx.textAlign='left';
+        ctx.fillText('LVL 1 SPAWN CONDITION:  '+entry.intro,px+20,lineY+6);
+
+        // Nav hints
+        ctx.fillStyle='#333'; ctx.font='10px monospace'; ctx.textAlign='center';
+        ctx.fillText('← →  navigate     ESC / C  close',px+panelW/2,py+panelH-14);
+
+        // Nav arrows
+        if(codexPage>0){
+            ctx.fillStyle='#444'; ctx.font='18px monospace'; ctx.textAlign='left';
+            ctx.fillText('◀',px+14,py+panelH/2);
+        }
+        if(codexPage<ENEMY_CODEX.length-1){
+            ctx.fillStyle='#444'; ctx.font='18px monospace'; ctx.textAlign='right';
+            ctx.fillText('▶',px+panelW-14,py+panelH/2);
+        }
     }
 
-    function updateAmbushDroneAudio(){
-        if(!audioCtx || droneNodes.length === 0) return;
-
-        // Find nearest ambushing enemy and its intensity
-        let hi = 0;
-        enemies.forEach(e=>{
-            if(e.state==='AMBUSH'){
-                const d = Math.hypot(player.x-e.x, player.y-e.y);
-                const t = Math.max(0, 1-(d/(CELL*5.5)));
-                if(t > hi) hi = t;
-            }
-        });
-
-        try{
-            droneNodes.forEach(n=>{
-                n.gain.gain.setTargetAtTime(hi * n.targetVol, audioCtx.currentTime, 0.18);
-            });
-            // Subtle pitch drift on the mid layer based on how close they are
-            if(hi > 0 && droneNodes[1]){
-                const drift = 92 + hi * 18 + Math.sin(Date.now()*0.0007)*4;
-                droneNodes[1].osc.frequency.setTargetAtTime(drift, audioCtx.currentTime, 0.3);
-            }
-        }catch(e){}
-    }
-
-    function stopAmbushDrone(){
-        try{
-            droneNodes.forEach(n=>{
-                n.gain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
-            });
-        }catch(e){}
-    }
-    function playSpotSound(isSpecial){
-        if(!audioCtx) return;
-        try{
-            let o=audioCtx.createOscillator(), g=audioCtx.createGain();
-            o.type=isSpecial?'sawtooth':'triangle';
-            o.frequency.setValueAtTime(isSpecial?380:180,audioCtx.currentTime);
-            o.frequency.exponentialRampToValueAtTime(40,audioCtx.currentTime+0.4);
-            g.gain.setValueAtTime(0.3,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.4);
-            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.4);
-        }catch(e){}
-    }
-    function playFootstepSound(sprint){
-        if(!audioCtx) return;
-        try{
-            let o=audioCtx.createOscillator(), g=audioCtx.createGain();
-            o.type='sine'; o.frequency.setValueAtTime(sprint?75:55,audioCtx.currentTime);
-            o.frequency.exponentialRampToValueAtTime(20,audioCtx.currentTime+0.12);
-            g.gain.setValueAtTime(sprint?0.25:0.15,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.12);
-            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.12);
-        }catch(e){}
-    }
-    function playJumpscareSound(){
-        if(!audioCtx) return;
-        try{
-            let dur=0.75;
-            let o1=audioCtx.createOscillator(), o2=audioCtx.createOscillator(), g=audioCtx.createGain();
-            o1.type='sawtooth'; o1.frequency.setValueAtTime(120,audioCtx.currentTime); o1.frequency.linearRampToValueAtTime(30,audioCtx.currentTime+dur);
-            o2.type='square';   o2.frequency.setValueAtTime(125,audioCtx.currentTime); o2.frequency.linearRampToValueAtTime(25,audioCtx.currentTime+dur);
-            g.gain.setValueAtTime(0.6,audioCtx.currentTime); g.gain.linearRampToValueAtTime(0.001,audioCtx.currentTime+dur);
-            o1.connect(g); o2.connect(g); g.connect(audioCtx.destination);
-            o1.start(); o2.start(); o1.stop(audioCtx.currentTime+dur); o2.stop(audioCtx.currentTime+dur);
-        }catch(e){}
-    }
-    function playPopDemandSound(){
-        if(!audioCtx) return;
-        try{
-            let o=audioCtx.createOscillator(), g=audioCtx.createGain();
-            o.type='sawtooth'; o.frequency.setValueAtTime(600,audioCtx.currentTime);
-            o.frequency.exponentialRampToValueAtTime(200,audioCtx.currentTime+0.15);
-            g.gain.setValueAtTime(0.4,audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.15);
-            o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.15);
-        }catch(e){}
+    function handleCodexInput(){
+        if(!codexOpen) return;
+        if(keys['ArrowRight']||keys['KeyD']){ if(codexPage<ENEMY_CODEX.length-1){codexPage++;} keys['ArrowRight']=false;keys['KeyD']=false; }
+        if(keys['ArrowLeft']||keys['KeyA']){  if(codexPage>0){codexPage--;} keys['ArrowLeft']=false;keys['KeyA']=false; }
+        if(keys['Escape']||keys['KeyC']){ codexOpen=false; keys['Escape']=false;keys['KeyC']=false; }
     }
 
     window.openRedacted=function(){
         document.getElementById('redacted-overlay').style.display='flex';
-        requestAnimationFrame(()=>{ if(!inited) init(); resize(); document.getElementById('rintro').style.display='flex'; document.getElementById('rmsg').style.display='none'; });
+        requestAnimationFrame(()=>{
+            if(!inited) init(); resize();
+            document.getElementById('rintro').style.display='flex';
+            document.getElementById('rmsg').style.display='none';
+        });
     };
     window.startRedacted=function(){ initAudio(); currentLevel=0; isJumpscaring=false; loadLevel(0); };
 
@@ -662,18 +893,24 @@ window.blenderCycleMain = function () {
         map=raw.map(r=>[...r]); doors=[];
         for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(map[r][c]===2) doors.push({r,c,open:false});
         const lm=1.0+(lvlIndex*0.45);
+        const unlockMap=LEVEL_ENEMY_UNLOCK[lvlIndex]||null;
         enemies=ENEMY_LABELS.map((label,i)=>({
-            label, profile: ENEMY_PROFILES[label],
+            label, profile:ENEMY_PROFILES[label],
             x:(COLS-2-(i%3))*CELL-0.5*CELL, y:(ROWS-2-Math.floor(i/3))*CELL-0.5*CELL,
             baseSpeed:(0.9+i*0.12)*lm, speed:1.0,
             angle:Math.random()*Math.PI*2, state:'WANDER', timer:0,
             targetX:0, targetY:0, hasSpottedPlayer:false,
-            abilityCooldown:0, ambushReactionDelay:0
+            abilityCooldown:0, ambushReactionDelay:0,
+            _frozen:false, _wasLooked:false,
+            // lock threshold: how many doors must be open before this enemy activates
+            _unlockAt: unlockMap ? (unlockMap[label]??999) : 0,
+            _locked: unlockMap ? (unlockMap[label]??999) > 0 : false,
+            _justUnlocked: false,
         }));
         player={x:1.5*CELL,y:1.5*CELL,angle:0,stamina:1,alive:true};
         keys={}; mouseX=0; ePressed=false; canInteract=false; interactDoor=null; openedCount=0;
         hudWarningText=""; hudWarningTimer=0; flashDimmedTimer=0; footstepTimer=0;
-        isJumpscaring=false;
+        isJumpscaring=false; codexOpen=false;
         popDemandActive=false; popDemandTimer=0; popDemandCooldown=3000;
         popAngered=false; popAngeredTimer=0; popPlayerLooking=false;
         document.getElementById('rintro').style.display='none';
@@ -682,152 +919,146 @@ window.blenderCycleMain = function () {
         requestAnimationFrame(rloop);
     }
 
+    function updateEnemyLocks(){
+        const doorsOpen=doors.filter(d=>d.open).length;
+        enemies.forEach(e=>{
+            if(e._locked && doorsOpen >= e._unlockAt){
+                e._locked=false;
+                e._justUnlocked=true;
+                playSpotSound(true);
+            }
+        });
+    }
+
     function cellAt(r,c){ if(r<0||r>=ROWS||c<0||c>=COLS) return 1; return map[r][c]; }
     function isBlocking(r,c){ const v=cellAt(r,c); if(v===1) return true; if(v===2){const d=doors.find(d=>d.r===r&&d.c===c); return d&&!d.open;} return false; }
     function castRay(px,py,angle){ const dx=Math.cos(angle),dy=Math.sin(angle); let dist=0; while(dist<CELL*20){dist+=2;const col=Math.floor((px+dx*dist)/CELL),row=Math.floor((py+dy*dist)/CELL);if(isBlocking(row,col))return{dist,isDoor:cellAt(row,col)===2};}return{dist:CELL*20,isDoor:false}; }
     function checkLineOfSight(x1,y1,x2,y2){ const dist=Math.hypot(x2-x1,y2-y1); const dx=(x2-x1)/dist,dy=(y2-y1)/dist; let s=0; while(s<dist){s+=4;if(isBlocking(Math.floor((y1+dy*s)/CELL),Math.floor((x1+dx*s)/CELL)))return false;} return true; }
     function checkInteract(){ canInteract=false;interactDoor=null;const dx=Math.cos(player.angle),dy=Math.sin(player.angle);for(let s=0;s<CELL*1.2;s+=4){const col=Math.floor((player.x+dx*s)/CELL),row=Math.floor((player.y+dy*s)/CELL);const d=doors.find(d=>d.r===row&&d.c===col&&!d.open);if(d){canInteract=true;interactDoor=d;break;}} }
     function handleInteract(){ if(keys['KeyE']&&!ePressed&&canInteract&&interactDoor){interactDoor.open=true;ePressed=true;} if(!keys['KeyE'])ePressed=false; }
-
-    function isPlayerFacingEnemy(e){
-        const dx=e.x-player.x, dy=e.y-player.y;
-        let a=Math.atan2(dy,dx)-player.angle;
-        while(a>Math.PI)a-=Math.PI*2; while(a<-Math.PI)a+=Math.PI*2;
-        return Math.abs(a)<0.38;
-    }
+    function isPlayerFacingEnemy(e){ const dx=e.x-player.x,dy=e.y-player.y; let a=Math.atan2(dy,dx)-player.angle; while(a>Math.PI)a-=Math.PI*2;while(a<-Math.PI)a+=Math.PI*2; return Math.abs(a)<0.38; }
 
     function moveEnemy(e,dt){
-        if(isJumpscaring) return;
-        const tdx=player.x-e.x, tdy=player.y-e.y, dist=Math.hypot(tdx,tdy);
+        if(isJumpscaring||e._locked) return;
+        const tdx=player.x-e.x,tdy=player.y-e.y,dist=Math.hypot(tdx,tdy);
         e.timer-=dt;
         if(e.abilityCooldown>0) e.abilityCooldown-=dt;
         if(e.ambushReactionDelay>0){e.ambushReactionDelay-=dt;return;}
 
-        // ── Publish or Perish unique mechanic ──────────────────────────
+        // ── Publish or Perish ─────────────────────────────────────────
         if(e.label==='PUBLISH OR PERISH'){
             const hasLOS=checkLineOfSight(e.x,e.y,player.x,player.y);
-            popPlayerLooking = isPlayerFacingEnemy(e) && dist < CELL*7;
-
-            if(popAngered){
-                popAngeredTimer-=dt;
-                if(popAngeredTimer<=0){ popAngered=false; popDemandCooldown=POP_DEMAND_COOLDOWN; }
-                e.speed=e.baseSpeed*2.6; // very fast when angry
-            } else {
-                e.speed=e.baseSpeed*1.0;
-            }
-
+            popPlayerLooking=isPlayerFacingEnemy(e)&&dist<CELL*7;
+            if(popAngered){ popAngeredTimer-=dt; if(popAngeredTimer<=0){popAngered=false;popDemandCooldown=POP_DEMAND_COOLDOWN;} e.speed=e.baseSpeed*2.6; }
+            else{ e.speed=e.baseSpeed; }
             if(!popAngered){
                 if(popDemandActive){
                     popDemandTimer-=dt;
-                    if(popPlayerLooking && hasLOS){
-                        // player complied — cancel demand
-                        popDemandActive=false;
-                        popDemandTimer=0;
-                        popDemandCooldown=POP_DEMAND_COOLDOWN;
-                        hudWarningText=""; hudWarningTimer=0;
-                    } else if(popDemandTimer<=0){
-                        // player ignored it — get angry
-                        popDemandActive=false;
-                        popAngered=true;
-                        popAngeredTimer=POP_ANGRY_DURATION;
-                        hudWarningText="IT IS FURIOUS"; hudWarningTimer=120;
-                    } else {
-                        // still demanding: flash message
-                        const urgency=popDemandTimer/POP_DEMAND_WINDOW;
-                        if(Math.floor(Date.now()/200)%2===0){
-                            hudWarningText="LOOK AT ME"; hudWarningTimer=5;
-                        }
-                    }
+                    if(popPlayerLooking&&hasLOS){popDemandActive=false;popDemandTimer=0;popDemandCooldown=POP_DEMAND_COOLDOWN;hudWarningText="";hudWarningTimer=0;}
+                    else if(popDemandTimer<=0){popDemandActive=false;popAngered=true;popAngeredTimer=POP_ANGRY_DURATION;hudWarningText="IT IS FURIOUS";hudWarningTimer=120;}
+                    else{if(Math.floor(Date.now()/200)%2===0){hudWarningText="LOOK AT ME";hudWarningTimer=5;}}
                 } else {
                     popDemandCooldown-=dt;
-                    if(popDemandCooldown<=0 && dist<CELL*8 && hasLOS){
-                        popDemandActive=true;
-                        popDemandTimer=POP_DEMAND_WINDOW;
-                        hudWarningText="LOOK AT ME"; hudWarningTimer=5;
-                        playPopDemandSound();
-                    }
+                    if(popDemandCooldown<=0&&dist<CELL*8&&hasLOS){popDemandActive=true;popDemandTimer=POP_DEMAND_WINDOW;hudWarningText="LOOK AT ME";hudWarningTimer=5;playPopDemandSound();}
                 }
             }
         }
-        // ──────────────────────────────────────────────────────────────
+        // ── Weeping Angel (FINALS WEEK) ────────────────────────────────
+else if(e.label==='FINALS WEEK'){
+    const hasLOS=checkLineOfSight(e.x,e.y,player.x,player.y);
+    const playerLooking=isPlayerFacingEnemy(e)&&dist<CELL*9&&hasLOS;
+    
+    if(playerLooking){
+        e._frozen=true; 
+        e._wasLooked=true;
+    } else {
+        e._frozen=false;
+        
+        // NERF: Only teleport if the player is still relatively far away (dist > CELL * 3)
+        // NERF: Reduced the teleport step sizes so it doesn't instantly jump half the map
+        if(e._wasLooked && dist > CELL * 3){
+            e._wasLooked = false;
+            const steps = [0.15, 0.25, 0.35]; // Max 35% jump instead of 55%
+            for(const t of steps){
+                const tx2=e.x+(player.x-e.x)*t, ty2=e.y+(player.y-e.y)*t;
+                if(!isBlocking(Math.floor(ty2/CELL),Math.floor(tx2/CELL))){
+                    e.x=tx2; e.y=ty2; 
+                    break;
+                }
+            }
+        }
+        // NERF: Dropped speed multiplier from 2.8x to 1.6x
+        e.speed = e.baseSpeed * 1.6; 
+    }
+}
 
-        let pAngle=Math.atan2(-tdy,-tdx)-player.angle;
-        while(pAngle>Math.PI)pAngle-=Math.PI*2; while(pAngle<-Math.PI)pAngle+=Math.PI*2;
-        const inPlayerFlashlight=(dist<CELL*5.2&&Math.abs(pAngle)<0.28);
-
+        // ── State transitions ──────────────────────────────────────────
         let prev=e.state;
-        if(dist<CELL*2.5){
-            if(e.state==='AMBUSH')e.ambushReactionDelay=600;
-            e.state='CHASE';
-        } else if(e.state==='CHASE'&&dist>CELL*7.5){
-            e.state='WANDER';e.timer=0;e.hasSpottedPlayer=false;
-        } else if(e.state==='WANDER'&&dist<CELL*5.5){
-            const roll=Math.random();
-            if(roll<0.35)e.state='STALK'; else if(roll<0.7)e.state='AMBUSH'; else e.state='CHASE';
-            e.timer=4000+Math.random()*4000;
-        }
-        if(e.state!==prev&&(e.state==='CHASE'||e.state==='STALK'||e.state==='AMBUSH')){
-            if(!e.hasSpottedPlayer){playSpotSound(e.label==='FINALS WEEK'||e.label==='INTERNSHIP');e.hasSpottedPlayer=true;}
+        if(dist<CELL*2.5){if(e.state==='AMBUSH')e.ambushReactionDelay=600;e.state='CHASE';}
+        else if(e.state==='CHASE'&&dist>CELL*7.5){e.state='WANDER';e.timer=0;e.hasSpottedPlayer=false;}
+        else if(e.state==='WANDER'&&dist<CELL*5.5){const roll=Math.random();if(roll<0.35)e.state='STALK';else if(roll<0.7)e.state='AMBUSH';else e.state='CHASE';e.timer=4000+Math.random()*4000;}
+        if(e.state!==prev&&(e.state==='CHASE'||e.state==='STALK'||e.state==='AMBUSH')){if(!e.hasSpottedPlayer){playSpotSound(e.label==='FINALS WEEK'||e.label==='INTERNSHIP');e.hasSpottedPlayer=true;}}
+
+        // Abilities that apply in CHASE/STALK
+        if((e.state==='CHASE'||e.state==='STALK')&&e.label!=='FINALS WEEK'&&e.label!=='PUBLISH OR PERISH'){
+            const hasLOS=checkLineOfSight(e.x,e.y,player.x,player.y);
+            if(e.label==='INTERNSHIP'&&dist<CELL*5.5&&hasLOS&&e.abilityCooldown<=0&&hudWarningTimer<=0){
+                hudWarningText="STOP MOVING AND APPLAUD!";hudWarningTimer=120;e.abilityCooldown=6000;
+            }
         }
 
+        // ── Movement direction ─────────────────────────────────────────
+        let pAngle=Math.atan2(-tdy,-tdx)-player.angle;
+        while(pAngle>Math.PI)pAngle-=Math.PI*2;while(pAngle<-Math.PI)pAngle+=Math.PI*2;
+        const inFlashlight=(dist<CELL*5.2&&Math.abs(pAngle)<0.28);
         let tx=0,ty=0;
-        if(e.state==='CHASE'||e.state==='STALK'){
-            const hasLOS=checkLineOfSight(e.x,e.y,player.x,player.y);
-            if(e.label==='FINALS WEEK'&&dist<CELL*3.8&&hasLOS){
-                let ta=Math.atan2(tdy,tdx); let diff=ta-player.angle;
-                while(diff>Math.PI)diff-=Math.PI*2;while(diff<-Math.PI)diff+=Math.PI*2;
-                player.angle+=diff*0.035;
-            } else if(e.label==='INTERNSHIP'&&dist<CELL*5.5&&hasLOS){
-                if(e.abilityCooldown<=0&&hudWarningTimer<=0){
-                    hudWarningText="STOP MOVING AND APPLAUD!"; hudWarningTimer=120; e.abilityCooldown=6000;
-                }
-            }
+
+        if(e._frozen){
+            if(Math.hypot(player.x-e.x,player.y-e.y)<22){stopAmbushDrone();triggerJumpscare(e.label,e.profile.color);}
+            return;
         }
 
         if(e.state==='CHASE'){
-            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*(e.label==='INTERNSHIP'?1.05:1.35);
-            tx=tdx/dist; ty=tdy/dist;
+            if(e.label!=='PUBLISH OR PERISH'&&e.label!=='FINALS WEEK') e.speed=e.baseSpeed*(e.label==='INTERNSHIP'?1.05:1.35);
+            tx=tdx/dist;ty=tdy/dist;
         } else if(e.state==='STALK'){
-            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*0.7;
-            if(inPlayerFlashlight){tx=-tdx/dist;ty=-tdy/dist;} else if(dist>CELL*3.2){tx=tdx/dist;ty=tdy/dist;}
+            if(e.label!=='PUBLISH OR PERISH'&&e.label!=='FINALS WEEK') e.speed=e.baseSpeed*0.7;
+            if(inFlashlight){tx=-tdx/dist;ty=-tdy/dist;}else if(dist>CELL*3.2){tx=tdx/dist;ty=tdy/dist;}
         } else if(e.state==='AMBUSH'){
-            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*1.25;
-            if(e.timer<=0||inPlayerFlashlight){tx=tdx/dist;ty=tdy/dist;e.state='CHASE';e.ambushReactionDelay=600;return;}
+            if(e.label!=='PUBLISH OR PERISH'&&e.label!=='FINALS WEEK') e.speed=e.baseSpeed*1.25;
+            if(e.timer<=0||inFlashlight){tx=tdx/dist;ty=tdy/dist;e.state='CHASE';e.ambushReactionDelay=600;return;}
             else{
-                if(!e.targetX||Math.hypot(e.x-e.targetX,e.y-e.targetY)<10){
-                    e.targetX=player.x+Math.cos(player.angle)*CELL*3+(Math.random()-0.5)*CELL;
-                    e.targetY=player.y+Math.sin(player.angle)*CELL*3+(Math.random()-0.5)*CELL;
-                }
+                if(!e.targetX||Math.hypot(e.x-e.targetX,e.y-e.targetY)<10){e.targetX=player.x+Math.cos(player.angle)*CELL*3+(Math.random()-0.5)*CELL;e.targetY=player.y+Math.sin(player.angle)*CELL*3+(Math.random()-0.5)*CELL;}
                 const adx=e.targetX-e.x,ady=e.targetY-e.y,ad=Math.hypot(adx,ady);
                 if(ad>5){tx=adx/ad;ty=ady/ad;}
             }
         } else {
-            if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*0.85;
-            else if(!popAngered) e.speed=e.baseSpeed*0.85;
+            if(e.label!=='PUBLISH OR PERISH'&&e.label!=='FINALS WEEK') e.speed=e.baseSpeed*0.85;
+            else if(e.label!=='PUBLISH OR PERISH') e.speed=e.baseSpeed*0.85;
             if(e.timer<=0){e.angle=Math.random()*Math.PI*2;e.timer=2000+Math.random()*2500;}
             tx=Math.cos(e.angle);ty=Math.sin(e.angle);
         }
 
         const nx=e.x+tx*e.speed,ny=e.y+ty*e.speed;
         const ec=Math.floor(e.x/CELL),er=Math.floor(e.y/CELL);
-        if(!isBlocking(er,Math.floor(nx/CELL)))e.x=nx; else e.angle+=Math.PI*0.4;
-        if(!isBlocking(Math.floor(ny/CELL),ec))e.y=ny; else e.angle+=Math.PI*0.4;
+        if(!isBlocking(er,Math.floor(nx/CELL)))e.x=nx;else e.angle+=Math.PI*0.4;
+        if(!isBlocking(Math.floor(ny/CELL),ec))e.y=ny;else e.angle+=Math.PI*0.4;
         if(Math.hypot(player.x-e.x,player.y-e.y)<22){stopAmbushDrone();triggerJumpscare(e.label,e.profile.color);}
     }
 
     function triggerJumpscare(killerLabel,col){
-        isJumpscaring=true; jumpscareTimer=750; jumpscareKiller=killerLabel; jumpscareColor=col||[255,0,0];
-        document.exitPointerLock(); playJumpscareSound();
+        isJumpscaring=true;jumpscareTimer=750;jumpscareKiller=killerLabel;jumpscareColor=col||[255,0,0];
+        document.exitPointerLock();playJumpscareSound();
     }
 
     function endGame(won,caughtBy){
         rRunning=false;isJumpscaring=false;stopAmbushDrone();document.exitPointerLock();
-        const msgEl=document.getElementById('rmsg');
         document.getElementById('rmsg-title').textContent=won?'GRADUATED':'ACADEMIC PROBATION';
         document.getElementById('rmsg-title').style.color=won?'#fff':'#700';
         document.getElementById('rmsg-body').textContent=won?'You survived the final gauntlet.':`Crushed by: ${caughtBy}`;
-        let old=document.getElementById('rmsg-btn'); if(old)old.remove();
-        msgEl.style.display='block'; player.alive=!won?false:true;
+        let old=document.getElementById('rmsg-btn');if(old)old.remove();
+        document.getElementById('rmsg').style.display='block';
+        player.alive=won;
     }
 
     function displayLevelWinScreen(lvlIndex){
@@ -836,11 +1067,11 @@ window.blenderCycleMain = function () {
         document.getElementById('rmsg-title').textContent=sd.title;
         document.getElementById('rmsg-title').style.color='#00ff66';
         document.getElementById('rmsg-body').textContent=sd.body;
-        let old=document.getElementById('rmsg-btn'); if(old)old.remove();
+        let old=document.getElementById('rmsg-btn');if(old)old.remove();
         const btn=document.createElement('button');
-        btn.id='rmsg-btn'; btn.textContent=sd.btn;
+        btn.id='rmsg-btn';btn.textContent=sd.btn;
         btn.style.cssText='margin-top:20px;padding:10px 20px;background:#222;color:#fff;border:1px solid #00ff66;font-family:monospace;cursor:pointer;';
-        btn.onclick=()=>{ currentLevel++; loadLevel(currentLevel); };
+        btn.onclick=()=>{currentLevel++;loadLevel(currentLevel);};
         document.getElementById('rmsg').appendChild(btn);
         document.getElementById('rmsg').style.display='block';
     }
@@ -850,6 +1081,7 @@ window.blenderCycleMain = function () {
         const nowOpen=doors.filter(d=>d.open).length;
         if(nowOpen!==openedCount){
             openedCount=nowOpen;
+            updateEnemyLocks();
             if(openedCount>=doors.length){
                 if(currentLevel<LEVEL_MAPS.length-1) displayLevelWinScreen(currentLevel);
                 else endGame(true,null);
@@ -857,8 +1089,8 @@ window.blenderCycleMain = function () {
         }
     }
 
-    // ── Draw distinct enemy sprite ──────────────────────────────────────
-    function drawEnemySprite(e, screenX, spriteH, spriteW, top, brightness, aiAlpha){
+    // ── Draw distinct enemy sprite ────────────────────────────────────
+    function drawEnemySprite(e,screenX,spriteH,spriteW,top,brightness,aiAlpha){
         const p=e.profile;
         const [cr,cg,cb]=p.color;
         const pulse=e.state==='CHASE'?(0.4+0.6*Math.sin(Date.now()*0.025)):(0.8+0.2*Math.sin(Date.now()*0.003));
@@ -866,92 +1098,67 @@ window.blenderCycleMain = function () {
         const gb=Math.floor(cg*(brightness||0.1)*pulse);
         const bb=Math.floor(cb*(brightness||0.1)*pulse);
         const col=`rgba(${rb},${gb},${bb},${aiAlpha})`;
-
         ctx.save();
+        if(brightness>0.05||e.state==='AMBUSH'){ctx.shadowBlur=20;ctx.shadowColor=p.glowColor;ctx.globalAlpha=aiAlpha*0.6;}
 
-        // glow halo
-        if(brightness>0.05||e.state==='AMBUSH'){
-            ctx.shadowBlur=20; ctx.shadowColor=p.glowColor; ctx.globalAlpha=aiAlpha*0.6;
-        }
-
-        // ── shape variants ──
         if(p.shape==='diamond'){
-            // GPA 4.0 — sharp diamond: pristine, geometric perfection
-            const cx=screenX, cy=top+spriteH*0.5, hw=spriteW*0.45, hh=spriteH*0.42;
-            ctx.fillStyle=col;
-            ctx.beginPath();
-            ctx.moveTo(cx,cy-hh); ctx.lineTo(cx+hw,cy); ctx.lineTo(cx,cy+hh); ctx.lineTo(cx-hw,cy);
-            ctx.closePath(); ctx.fill();
-            // inner shine
-            ctx.globalAlpha=aiAlpha*0.4;
-            ctx.fillStyle=`rgba(255,255,255,${brightness*0.6})`;
-            ctx.beginPath();
-            ctx.moveTo(cx,cy-hh*0.55); ctx.lineTo(cx+hw*0.35,cy-hh*0.1); ctx.lineTo(cx,cy+hh*0.05); ctx.lineTo(cx-hw*0.35,cy-hh*0.1);
-            ctx.closePath(); ctx.fill();
+            const cx=screenX,cy=top+spriteH*0.5,hw=spriteW*0.45,hh=spriteH*0.42;
+            ctx.fillStyle=col; ctx.globalAlpha=aiAlpha;
+            ctx.beginPath(); ctx.moveTo(cx,cy-hh);ctx.lineTo(cx+hw,cy);ctx.lineTo(cx,cy+hh);ctx.lineTo(cx-hw,cy);ctx.closePath();ctx.fill();
+            ctx.globalAlpha=aiAlpha*0.4; ctx.fillStyle=`rgba(255,255,255,${brightness*0.6})`;
+            ctx.beginPath();ctx.moveTo(cx,cy-hh*0.55);ctx.lineTo(cx+hw*0.35,cy-hh*0.1);ctx.lineTo(cx,cy+hh*0.05);ctx.lineTo(cx-hw*0.35,cy-hh*0.1);ctx.closePath();ctx.fill();
 
         } else if(p.shape==='tall'){
-            // THESIS DUE — tall thin pillar with crumbling top chunks
-            const cx=screenX, w=spriteW*0.35, h=spriteH*0.85;
-            ctx.globalAlpha=aiAlpha;
-            ctx.fillStyle=col;
-            ctx.fillRect(cx-w/2, top+spriteH*0.08, w, h);
-            // floating chunks above
-            for(let i=0;i<3;i++){
-                const ox=(i-1)*w*0.7, oy=spriteH*(0.02+i*0.015);
-                ctx.globalAlpha=aiAlpha*(0.6-i*0.15);
-                ctx.fillRect(cx+ox-w*0.22, top+oy, w*0.4, spriteH*0.06);
-            }
+            const cx=screenX,w=spriteW*0.35,h=spriteH*0.85;
+            ctx.globalAlpha=aiAlpha;ctx.fillStyle=col;
+            ctx.fillRect(cx-w/2,top+spriteH*0.08,w,h);
+            for(let i=0;i<3;i++){const ox=(i-1)*w*0.7,oy=spriteH*(0.02+i*0.015);ctx.globalAlpha=aiAlpha*(0.6-i*0.15);ctx.fillRect(cx+ox-w*0.22,top+oy,w*0.4,spriteH*0.06);}
 
-        } else if(p.shape==='wide'){
-            // FINALS WEEK — squat wide mass with "eye" slots
-            const cx=screenX, w=spriteW*0.9, h=spriteH*0.55, ty=top+spriteH*0.25;
+        } else if(p.shape==='angel'){
+            const cx=screenX,h=spriteH*0.85,w=spriteW*0.7,ty2=top+spriteH*0.08;
+            const frozen=e._frozen;
             ctx.globalAlpha=aiAlpha;
+            // body
             ctx.fillStyle=col;
-            ctx.fillRect(cx-w/2,ty,w,h);
-            // dark "eyes"
-            ctx.fillStyle=`rgba(0,0,0,0.7)`;
-            ctx.fillRect(cx-w*0.28, ty+h*0.2, w*0.18, h*0.22);
-            ctx.fillRect(cx+w*0.10, ty+h*0.2, w*0.18, h*0.22);
+            ctx.beginPath();ctx.moveTo(cx-w*0.38,ty2+h);ctx.lineTo(cx+w*0.38,ty2+h);ctx.lineTo(cx+w*0.22,ty2+h*0.38);ctx.lineTo(cx-w*0.22,ty2+h*0.38);ctx.closePath();ctx.fill();
+            // head
+            const headR=w*0.22;
+            ctx.beginPath();ctx.arc(cx,ty2+h*0.28,headR,0,Math.PI*2);ctx.fill();
+            // wings
+            const wingSpread=frozen?0.9:1.35, wingTuck=frozen?0.55:0.2;
+            ctx.globalAlpha=aiAlpha*0.85;
+            ctx.beginPath();ctx.moveTo(cx-w*0.18,ty2+h*0.42);ctx.quadraticCurveTo(cx-w*wingSpread,ty2+h*wingTuck,cx-w*0.55,ty2+h*0.85);ctx.lineTo(cx-w*0.22,ty2+h*0.72);ctx.closePath();ctx.fill();
+            ctx.beginPath();ctx.moveTo(cx+w*0.18,ty2+h*0.42);ctx.quadraticCurveTo(cx+w*wingSpread,ty2+h*wingTuck,cx+w*0.55,ty2+h*0.85);ctx.lineTo(cx+w*0.22,ty2+h*0.72);ctx.closePath();ctx.fill();
+            // arms
+            ctx.globalAlpha=aiAlpha;
+            if(frozen){
+                ctx.beginPath();ctx.moveTo(cx-w*0.22,ty2+h*0.38);ctx.quadraticCurveTo(cx-w*0.35,ty2+h*0.25,cx-w*0.1,ty2+h*0.2);ctx.lineTo(cx-w*0.06,ty2+h*0.32);ctx.closePath();ctx.fill();
+                ctx.beginPath();ctx.moveTo(cx+w*0.22,ty2+h*0.38);ctx.quadraticCurveTo(cx+w*0.35,ty2+h*0.25,cx+w*0.1,ty2+h*0.2);ctx.lineTo(cx+w*0.06,ty2+h*0.32);ctx.closePath();ctx.fill();
+            } else {
+                ctx.beginPath();ctx.moveTo(cx-w*0.22,ty2+h*0.42);ctx.quadraticCurveTo(cx-w*0.6,ty2+h*0.38,cx-w*0.68,ty2+h*0.55);ctx.lineTo(cx-w*0.4,ty2+h*0.58);ctx.closePath();ctx.fill();
+                ctx.beginPath();ctx.moveTo(cx+w*0.22,ty2+h*0.42);ctx.quadraticCurveTo(cx+w*0.6,ty2+h*0.38,cx+w*0.68,ty2+h*0.55);ctx.lineTo(cx+w*0.4,ty2+h*0.58);ctx.closePath();ctx.fill();
+            }
+            // cracks
+            if(brightness>0.3){ctx.globalAlpha=aiAlpha*(brightness-0.3)*0.6;ctx.strokeStyle='rgba(80,80,60,0.8)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cx-w*0.05,ty2+h*0.5);ctx.lineTo(cx+w*0.08,ty2+h*0.65);ctx.stroke();ctx.beginPath();ctx.moveTo(cx+w*0.1,ty2+h*0.42);ctx.lineTo(cx+w*0.02,ty2+h*0.55);ctx.stroke();}
+            // eyes only when moving
+            if(!frozen&&brightness>0.08){ctx.globalAlpha=aiAlpha*Math.min(1,brightness*2);ctx.fillStyle='rgba(255,80,0,0.9)';ctx.beginPath();ctx.arc(cx-headR*0.35,ty2+h*0.27,headR*0.18,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(cx+headR*0.35,ty2+h*0.27,headR*0.18,0,Math.PI*2);ctx.fill();}
 
         } else if(p.shape==='split'){
-            // INTERNSHIP — two separate floating halves, a rift down the middle
-            const cx=screenX, hw=spriteW*0.36, h=spriteH*0.72, ty=top+spriteH*0.14;
-            const gap=spriteW*0.08;
-            ctx.globalAlpha=aiAlpha;
-            ctx.fillStyle=col;
-            ctx.fillRect(cx-hw-gap, ty, hw, h);
-            ctx.fillRect(cx+gap,     ty, hw, h);
-            // rift glow
-            const grad=ctx.createLinearGradient(cx,ty,cx,ty+h);
-            grad.addColorStop(0,`rgba(0,255,120,0)`);
-            grad.addColorStop(0.5,`rgba(0,255,120,${aiAlpha*0.5})`);
-            grad.addColorStop(1,`rgba(0,255,120,0)`);
-            ctx.fillStyle=grad;
-            ctx.fillRect(cx-gap,ty,gap*2,h);
+            const cx=screenX,hw=spriteW*0.36,h=spriteH*0.72,ty2=top+spriteH*0.14,gap=spriteW*0.08;
+            ctx.globalAlpha=aiAlpha;ctx.fillStyle=col;
+            ctx.fillRect(cx-hw-gap,ty2,hw,h);ctx.fillRect(cx+gap,ty2,hw,h);
+            const grad=ctx.createLinearGradient(cx,ty2,cx,ty2+h);
+            grad.addColorStop(0,'rgba(0,255,120,0)');grad.addColorStop(0.5,`rgba(0,255,120,${aiAlpha*0.5})`);grad.addColorStop(1,'rgba(0,255,120,0)');
+            ctx.fillStyle=grad;ctx.fillRect(cx-gap,ty2,gap*2,h);
 
         } else if(p.shape==='orb'){
-            // PUBLISH OR PERISH — pulsating crimson orb, rage rings when angry
-            const cx=screenX, cy=top+spriteH*0.5, r=spriteH*0.38*p.size;
-            ctx.globalAlpha=aiAlpha;
-            ctx.fillStyle=col;
-            ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
-            // core bright spot
-            ctx.globalAlpha=aiAlpha*brightness*0.7;
-            ctx.fillStyle=`rgba(255,180,180,0.8)`;
-            ctx.beginPath(); ctx.arc(cx-r*0.25,cy-r*0.25,r*0.3,0,Math.PI*2); ctx.fill();
-            // anger rings
-            if(popAngered){
-                const t=(Date.now()*0.006)%(Math.PI*2);
-                for(let i=0;i<3;i++){
-                    const rr=r+(i+1)*spriteH*0.07+Math.sin(t+i*1.2)*spriteH*0.04;
-                    ctx.globalAlpha=aiAlpha*(0.5-i*0.12);
-                    ctx.strokeStyle=`rgb(255,${Math.floor(30+i*20)},0)`;
-                    ctx.lineWidth=2+i;
-                    ctx.beginPath(); ctx.arc(cx,cy,rr,0,Math.PI*2); ctx.stroke();
-                }
-            }
+            const cx=screenX,cy=top+spriteH*0.5,r=spriteH*0.38*p.size;
+            ctx.globalAlpha=aiAlpha;ctx.fillStyle=col;
+            ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+            ctx.globalAlpha=aiAlpha*brightness*0.7;ctx.fillStyle='rgba(255,180,180,0.8)';
+            ctx.beginPath();ctx.arc(cx-r*0.25,cy-r*0.25,r*0.3,0,Math.PI*2);ctx.fill();
+            if(popAngered){const t=(Date.now()*0.006)%(Math.PI*2);for(let i=0;i<3;i++){const rr=r+(i+1)*spriteH*0.07+Math.sin(t+i*1.2)*spriteH*0.04;ctx.globalAlpha=aiAlpha*(0.5-i*0.12);ctx.strokeStyle=`rgb(255,${Math.floor(30+i*20)},0)`;ctx.lineWidth=2+i;ctx.beginPath();ctx.arc(cx,cy,rr,0,Math.PI*2);ctx.stroke();}}
         }
-
         ctx.restore();
     }
 
@@ -960,14 +1167,15 @@ window.blenderCycleMain = function () {
             const [cr,cg,cb]=jumpscareColor;
             ctx.fillStyle=Math.floor(Date.now()/40)%2===0?`rgb(${cr},${Math.floor(cg*0.3)},${Math.floor(cb*0.3)})`:'#000000';
             ctx.fillRect(0,0,W,H);
-            ctx.fillStyle='#ffffff'; ctx.font='bold 48px monospace'; ctx.textAlign='center';
+            ctx.fillStyle='#ffffff';ctx.font='bold 48px monospace';ctx.textAlign='center';
             ctx.fillText(jumpscareKiller.toUpperCase(),W/2,H/2);
             return;
         }
+        if(codexOpen){ renderCodex(); return; }
 
         const theme=LEVEL_THEMES[currentLevel]||LEVEL_THEMES[0];
-        ctx.fillStyle=theme.floor; ctx.fillRect(0,0,W,H);
-        if(flashDimmedTimer>0) flashDimmedTimer-=16;
+        ctx.fillStyle=theme.floor;ctx.fillRect(0,0,W,H);
+        if(flashDimmedTimer>0)flashDimmedTimer-=16;
         const rayW=W/RAYS;
 
         for(let i=0;i<RAYS;i++){
@@ -975,22 +1183,17 @@ window.blenderCycleMain = function () {
             const{dist,isDoor}=castRay(player.x,player.y,ra);
             depthBuffer[i]=dist;
             const corr=dist*Math.cos(ra-player.angle);
-            const wallH=Math.min(H,(CELL*H)/corr), top=(H-wallH)/2;
-            let ad=ra-player.angle; while(ad>Math.PI)ad-=Math.PI*2;while(ad<-Math.PI)ad+=Math.PI*2;
-            let bright=0;
-            const maxA=0.28;
-            if(Math.abs(ad)<maxA){
-                const ef=Math.cos((ad/maxA)*(Math.PI/2));
-                const tr=(flashDimmedTimer>0)?CELL*3.5:CELL*5.5;
-                const df=Math.max(0,1-(corr/tr)*(corr/tr));
-                bright=Math.min(1,ef*df*((flashDimmedTimer>0)?0.45:0.95));
-            }
+            const wallH=Math.min(H,(CELL*H)/corr),top=(H-wallH)/2;
+            let ad=ra-player.angle;while(ad>Math.PI)ad-=Math.PI*2;while(ad<-Math.PI)ad+=Math.PI*2;
+            let bright=0;const maxA=0.28;
+            if(Math.abs(ad)<maxA){const ef=Math.cos((ad/maxA)*(Math.PI/2));const tr=(flashDimmedTimer>0)?CELL*3.5:CELL*5.5;const df=Math.max(0,1-(corr/tr)*(corr/tr));bright=Math.min(1,ef*df*((flashDimmedTimer>0)?0.45:0.95));}
             if(isDoor){ctx.fillStyle=`rgb(${Math.floor(theme.door.r*bright)},${Math.floor(theme.door.g*bright)},${Math.floor(theme.door.b*bright)})`;}
             else{ctx.fillStyle=`rgb(${Math.floor(theme.wall.r*bright)},${Math.floor(theme.wall.g*bright)},${Math.floor(theme.wall.b*bright)})`;}
             ctx.fillRect(i*rayW,top,rayW+0.5,wallH);
         }
 
         enemies.forEach(e=>{
+            if(e._locked) return;
             const ex=e.x-player.x,ey=e.y-player.y,dist=Math.hypot(ex,ey);
             if(dist>CELL*15)return;
             let dAngle=Math.atan2(ey,ex)-player.angle;
@@ -1000,25 +1203,15 @@ window.blenderCycleMain = function () {
             const ri=Math.floor(((dAngle+FOV/2)/FOV)*RAYS);
             if(ri>=0&&ri<RAYS&&depthBuffer[ri]<dist-15)return;
             const spriteH=Math.min(H*2,(CELL*H)/dist)*e.profile.size;
-            const spriteW=spriteH*0.6;
-            const top=(H-spriteH)/2;
-            let bright=0;
-            const maxA=0.28;
-            if(Math.abs(dAngle)<maxA){
-                const ef=Math.cos((dAngle/maxA)*(Math.PI/2));
-                const tr=(flashDimmedTimer>0)?CELL*3.5:CELL*5.5;
-                bright=Math.min(1,ef*Math.max(0,1-(dist/tr)*(dist/tr))*((flashDimmedTimer>0)?0.45:0.95));
-            }
+            const spriteW=spriteH*0.6,top=(H-spriteH)/2;
+            let bright=0;const maxA=0.28;
+            if(Math.abs(dAngle)<maxA){const ef=Math.cos((dAngle/maxA)*(Math.PI/2));const tr=(flashDimmedTimer>0)?CELL*3.5:CELL*5.5;bright=Math.min(1,ef*Math.max(0,1-(dist/tr)*(dist/tr))*((flashDimmedTimer>0)?0.45:0.95));}
             let aiAlpha=bright;
-            if(e.state==='AMBUSH')aiAlpha=Math.max(0.22,bright);
+            if(e.state==='AMBUSH')aiAlpha=Math.max(0.75,bright);
             else if(e.state==='STALK')aiAlpha=Math.max(0.02,bright);
             else if(e.state==='CHASE')aiAlpha=Math.max(0.12,aiAlpha);
-            // Publish or Perish glows brighter when angry
             if(e.label==='PUBLISH OR PERISH'&&popAngered)aiAlpha=Math.max(0.55,aiAlpha);
-
             drawEnemySprite(e,screenX,spriteH,spriteW,top,bright,aiAlpha);
-
-            // label
             if(dist<CELL*4&&(bright>0.12||e.state==='AMBUSH')){
                 const alpha=Math.min(1,(CELL*4-dist)/(CELL*1.5));
                 ctx.globalAlpha=alpha*(e.state==='AMBUSH'?0.4:bright);
@@ -1031,47 +1224,58 @@ window.blenderCycleMain = function () {
             }
         });
 
-        // HUD warning / demand flash
+        // HUD warnings
         if(hudWarningTimer>0&&hudWarningText!==""){
-            const isPopMsg=hudWarningText==="LOOK AT ME"||hudWarningText==="IT IS FURIOUS";
-            const flicker=isPopMsg?(Math.floor(Date.now()/80)%2===0?1:0.4):1;
-            ctx.fillStyle=isPopMsg?`rgba(255,0,0,${Math.min(1,hudWarningTimer/30)*flicker})`:`rgba(255,0,0,${Math.min(1,hudWarningTimer/30)})`;
-            ctx.font=`bold ${isPopMsg?32:24}px monospace`;
-            ctx.textAlign='center';
-            ctx.fillText(hudWarningText,W/2,H*0.3);
-            ctx.globalAlpha=1;
+            const isPop=hudWarningText==="LOOK AT ME"||hudWarningText==="IT IS FURIOUS";
+            const flicker=isPop?(Math.floor(Date.now()/80)%2===0?1:0.4):1;
+            ctx.fillStyle=isPop?`rgba(255,0,0,${Math.min(1,hudWarningTimer/30)*flicker})`:`rgba(255,0,0,${Math.min(1,hudWarningTimer/30)})`;
+            ctx.font=`bold ${isPop?32:24}px monospace`;ctx.textAlign='center';
+            ctx.fillText(hudWarningText,W/2,H*0.3);ctx.globalAlpha=1;
         }
-
-        // Publish or Perish demand countdown bar
         if(popDemandActive){
-            const pct=popDemandTimer/POP_DEMAND_WINDOW;
-            const bw=W*0.35, bh=8, bx=(W-bw)/2, by=H*0.38;
-            ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(bx,by,bw,bh);
-            ctx.fillStyle=`rgb(255,${Math.floor(pct*80)},0)`; ctx.fillRect(bx,by,bw*pct,bh);
+            const pct=popDemandTimer/POP_DEMAND_WINDOW,bw=W*0.35,bh=8,bx=(W-bw)/2,by=H*0.38;
+            ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(bx,by,bw,bh);
+            ctx.fillStyle=`rgb(255,${Math.floor(pct*80)},0)`;ctx.fillRect(bx,by,bw*pct,bh);
         }
-        if(popAngered){
-            const pct=popAngeredTimer/POP_ANGRY_DURATION;
-            ctx.fillStyle=`rgba(255,0,0,${0.08*(1+Math.sin(Date.now()*0.01))})`;
-            ctx.fillRect(0,0,W,H);
-        }
+        if(popAngered){ctx.fillStyle=`rgba(255,0,0,${0.08*(1+Math.sin(Date.now()*0.01))})`;ctx.fillRect(0,0,W,H);}
+
+        // Unlock announcement banners
+        enemies.forEach(e=>{
+            if(e._justUnlocked){
+                const [cr,cg,cb]=e.profile.color;
+                ctx.fillStyle=`rgba(${cr},${cg},${cb},0.85)`;
+                ctx.font='bold 13px monospace';ctx.textAlign='center';
+                ctx.fillText(`⚠ ${e.label} HAS ENTERED THE FLOOR`,W/2,H*0.18);
+                e._justUnlocked=false;
+            }
+        });
+
+        // Codex hint
+        ctx.fillStyle='rgba(255,255,255,0.12)';ctx.font='10px monospace';ctx.textAlign='right';
+        ctx.fillText('[C] THREAT CODEX',W-14,H-12);
     }
 
     function rupdate(ts){
-        const dt=ts-last;last=ts; if(!player.alive)return;
+        const dt=ts-last;last=ts;if(!player.alive)return;
         if(isJumpscaring){jumpscareTimer-=dt;if(jumpscareTimer<=0)endGame(false,jumpscareKiller);return;}
+
+        // Codex toggle
+        if(keys['KeyC']&&!codexOpen){codexOpen=true;keys['KeyC']=false;document.exitPointerLock();}
+        if(codexOpen){handleCodexInput();return;}
+        else if(!document.pointerLockElement&&rRunning){canvas.requestPointerLock();}
+
         if(hudWarningTimer>0){hudWarningTimer-=dt/16;if(hudWarningTimer<=0)hudWarningText="";}
 
         player.angle+=mouseX*0.002;mouseX=0;
         const sprinting=keys['ShiftLeft']||keys['ShiftRight'];
         const moving=keys['KeyW']||keys['KeyS']||keys['KeyA']||keys['KeyD'];
         if(moving){
-            if(hudWarningTimer>0) player.stamina=Math.max(0,player.stamina-STAM_DRAIN*3);
-            else if(sprinting) player.stamina=Math.max(0,player.stamina-STAM_DRAIN);
+            if(hudWarningTimer>0)player.stamina=Math.max(0,player.stamina-STAM_DRAIN*3);
+            else if(sprinting)player.stamina=Math.max(0,player.stamina-STAM_DRAIN);
             else player.stamina=Math.min(1,player.stamina+STAM_REGEN);
-            footstepTimer+=dt;
-            const thr=(sprinting&&player.stamina>0)?260:420;
+            footstepTimer+=dt;const thr=(sprinting&&player.stamina>0)?260:420;
             if(footstepTimer>=thr){playFootstepSound(sprinting&&player.stamina>0);footstepTimer=0;}
-        } else { player.stamina=Math.min(1,player.stamina+STAM_REGEN); footstepTimer=0; }
+        } else {player.stamina=Math.min(1,player.stamina+STAM_REGEN);footstepTimer=0;}
 
         const spd=(sprinting&&player.stamina>0)?RUN_S:MOVE_S;
         let mx=0,my=0;
@@ -1087,6 +1291,7 @@ window.blenderCycleMain = function () {
         enemies.forEach(e=>moveEnemy(e,dt));
         updateAmbushDroneAudio();
         checkWin();
+
         document.getElementById('rstam').style.width=(player.stamina*100)+'%';
         if(canInteract){document.getElementById('rprompt').textContent='PRESS [E] TO UNLOCK DOOR';document.getElementById('rprompt').style.opacity='1';}
         else{document.getElementById('rprompt').style.opacity='0';}
